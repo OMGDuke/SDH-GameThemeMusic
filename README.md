@@ -3,7 +3,7 @@
 
 Play theme songs on your game pages
 
-![ProtonDB Badges](./assets/screenshot.jpg)
+![Game Theme Music](./assets/screenshot.jpg)
 
 ## How it works
 

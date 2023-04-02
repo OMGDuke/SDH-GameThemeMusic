@@ -1,4 +1,4 @@
-name: Build and Release ProtonDB Badges
+name: Build and Release Game Theme Music
 
 on:
     push:
@@ -35,7 +35,7 @@ jobs:
             - name: Upload package
               uses: actions/upload-artifact@v2
               with:
-                  name: protondb-decky
+                  name: sdh-gamethememusic
                   path: |
                       ./dist/*
     release:
@@ -47,15 +47,15 @@ jobs:
 
             - uses: actions/download-artifact@v3
               with:
-                  name: protondb-decky
-                  path: protondb-decky
+                  name: sdh-gamethememusic
+                  path: sdh-gamethememusic
 
             - name: zip/tar release
               run: |
-                  zip -r protondb-decky.zip protondb-decky/*
-                  tar -czvf protondb-decky.tar.gz protondb-decky
+                  zip -r sdh-gamethememusic.zip sdh-gamethememusic/*
+                  tar -czvf sdh-gamethememusic.tar.gz sdh-gamethememusic
             - name: Create a release
               uses: ncipollo/release-action@v1
               with:
-                  artifacts: 'protondb-decky.zip,protondb-decky.tar.gz'
+                  artifacts: 'sdh-gamethememusic.zip,sdh-gamethememusic.tar.gz'
                   allowUpdates: true
