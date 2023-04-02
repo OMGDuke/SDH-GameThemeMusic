@@ -1,4 +1,7 @@
 {
+    "overrides": "Overrides",
+    "deleteOverridesLabel": "Delete all overrides",
+    "deleteOverrides": "Delete Overrides",
     "settings": "Settings",
     "volume": "Music Volume",
     "volumeDescription": "Adjust music volume"
