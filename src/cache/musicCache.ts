@@ -9,7 +9,7 @@ localforage.config({
 type GameThemeMusicCache = {
   appName: string
   title: string
-  videoId: string | 'off'
+  videoId: string
   disabled?: boolean
 }
 

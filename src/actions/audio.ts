@@ -21,7 +21,7 @@ type YouTubeInitialData = {
   }
 }
 
-async function getYouTubeSearchResults(
+export async function getYouTubeSearchResults(
   serverAPI: ServerAPI,
   appName: string
 ): Promise<{ appName: string; title: string; id: string }[] | undefined> {

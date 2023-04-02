@@ -1,8 +1,19 @@
 {
-    "overrides": "Overrides",
-    "deleteOverridesLabel": "Delete all overrides",
+    "about": "About",
+    "changeThemeMusic": "Change Theme Music",
     "deleteOverrides": "Delete Overrides",
+    "deleteOverridesLabel": "Delete all overrides",
+    "noMusicLabel": "No Music",
+    "overrides": "Overrides",
+    "play": "Play",
+    "select": "Select",
+    "selected": "Selected",
     "settings": "Settings",
+    "stop": "Stop",
     "volume": "Music Volume",
-    "volumeDescription": "Adjust music volume"
+    "volumeDescription": "Adjust music volume",
+    "aboutLabel": "About Game Theme Music",
+    "aboutDescription": "Play theme songs on your game pages",
+    "supportLabel": "Support",
+    "supportDescription": "Visit the Steam Deck Homebrew Discord deckbrew.xyz/discord"
 }
