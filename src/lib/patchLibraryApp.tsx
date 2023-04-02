@@ -7,6 +7,7 @@ import {
 } from 'decky-frontend-lib'
 import React, { ReactElement } from 'react'
 import ThemePlayer from '../components/themePlayer'
+import { SettingsProvider } from '../context/settingsContext'
 
 function patchLibraryApp(serverAPI: ServerAPI) {
   return serverAPI.routerHook.addPatch(
@@ -44,7 +45,9 @@ function patchLibraryApp(serverAPI: ServerAPI) {
               container.props.children.splice(
                 -1,
                 0,
-                <ThemePlayer serverAPI={serverAPI} />
+                <SettingsProvider>
+                  <ThemePlayer serverAPI={serverAPI} />
+                </SettingsProvider>
               )
 
               return ret2
