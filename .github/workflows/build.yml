@@ -35,7 +35,7 @@ jobs:
             - name: Upload package
               uses: actions/upload-artifact@v2
               with:
-                  name: sdh-gamethememusic
+                  name: SDH-GameThemeMusic
                   path: |
                       ./dist/*
     release:
@@ -47,15 +47,15 @@ jobs:
 
             - uses: actions/download-artifact@v3
               with:
-                  name: sdh-gamethememusic
-                  path: sdh-gamethememusic
+                  name: SDH-GameThemeMusic
+                  path: SDH-GameThemeMusic
 
             - name: zip/tar release
               run: |
-                  zip -r sdh-gamethememusic.zip sdh-gamethememusic/*
-                  tar -czvf sdh-gamethememusic.tar.gz sdh-gamethememusic
+                  zip -r SDH-GameThemeMusic.zip SDH-GameThemeMusic/*
+                  tar -czvf SDH-GameThemeMusic.tar.gz SDH-GameThemeMusic
             - name: Create a release
               uses: ncipollo/release-action@v1
               with:
-                  artifacts: 'sdh-gamethememusic.zip,sdh-gamethememusic.tar.gz'
+                  artifacts: 'SDH-GameThemeMusic.zip,SDH-GameThemeMusic.tar.gz'
                   allowUpdates: true
