@@ -1,4 +1,5 @@
 import {
+  ButtonItem,
   PanelSection,
   PanelSectionProps,
   PanelSectionRow,
@@ -8,6 +9,7 @@ import React, { FC, ReactNode } from 'react'
 import { useSettings } from '../../context/settingsContext'
 import useTranslations from '../../hooks/useTranslations'
 import { FaVolumeUp } from 'react-icons/fa'
+import { clearCache } from '../../cache/musicCache'
 
 type ExtendedPanelSectionProps = PanelSectionProps & {
   children: ReactNode
@@ -44,6 +46,18 @@ export default function Index() {
             step={0.01}
             icon={<FaVolumeUp />}
           />
+        </DeckPanelSectionRow>
+      </DeckPanelSection>
+      <DeckPanelSection title={t('overrides')}>
+        <DeckPanelSectionRow>
+          <ButtonItem
+            label={t('deleteOverridesLabel')}
+            bottomSeparator="none"
+            layout="below"
+            onClick={() => clearCache()}
+          >
+            {t('deleteOverrides')}
+          </ButtonItem>
         </DeckPanelSectionRow>
       </DeckPanelSection>
     </div>

@@ -46,6 +46,7 @@
   },
   "dependencies": {
     "decky-frontend-lib": "^3.19.1",
+    "localforage": "^1.10.0",
     "react-icons": "^4.7.1"
   },
   "pnpm": {
