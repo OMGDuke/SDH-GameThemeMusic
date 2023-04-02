@@ -29,7 +29,7 @@ export default function ThemePlayer({
         audioRef.current.src = ''
       }
     }
-  }, [audioUrl])
+  }, [audioUrl, audioRef])
 
   if (!audioUrl?.length) return <></>
 
