@@ -7,12 +7,14 @@ const useThemeMusic = (serverAPI: ServerAPI, appName: string | undefined) => {
   const [audioUrl, setAudioUrl] = useState<string>()
 
   async function refresh() {
-    const url = await getAudio(serverAPI, appName as string).catch(
-      () => undefined
-    )
+    if (appName?.length) {
+      const url = await getAudio(serverAPI, appName as string).catch(
+        () => undefined
+      )
 
-    if (url?.length && appName?.length) {
-      setAudioUrl(url)
+      if (url?.length) {
+        setAudioUrl(url)
+      }
     }
   }
 

@@ -24,7 +24,7 @@ type YouTubeInitialData = {
 async function getYouTubeSearchResults(
   serverAPI: ServerAPI,
   appName: string
-): Promise<{ title: string; videoId: string } | undefined> {
+): Promise<{ title: string; videoId: string }[] | undefined> {
   const req = {
     method: 'GET',
     url: `https://www.youtube.com/results?search_query=${encodeURIComponent(
@@ -64,7 +64,7 @@ async function getYouTubeSearchResults(
           .filter(
             (res: { title: string; videoId: string }) => res.videoId?.length
           )
-      return results?.[0]
+      return results
     } else {
       return undefined
     }
@@ -96,6 +96,7 @@ async function getAudioUrlFromVideoId(
     const streamMap = configJson.streamingData.adaptiveFormats.filter(
       (f: { mimeType: string }) => f.mimeType.startsWith('audio/')
     )[0]
+    if (!streamMap?.url) return undefined
 
     const signature = streamMap?.signatureCipher
       ? streamMap.signatureCipher
@@ -103,10 +104,9 @@ async function getAudioUrlFromVideoId(
           .find((s: string) => s.startsWith('s='))
           .substr(2)
       : undefined
-    const url = streamMap?.url
-      ? `${streamMap.url}&${signature ? `sig=${signature}` : 'ratebypass=yes'}`
-      : undefined
-    return url
+    return `${streamMap.url}&${
+      signature ? `sig=${signature}` : 'ratebypass=yes'
+    }`
   }
   return undefined
 }
@@ -115,9 +115,17 @@ export async function getAudio(
   serverAPI: ServerAPI,
   appName: string
 ): Promise<string | undefined> {
-  const video = await getYouTubeSearchResults(serverAPI, appName)
-  if (video?.videoId) {
-    return getAudioUrlFromVideoId(serverAPI, video.videoId)
+  const videos = await getYouTubeSearchResults(serverAPI, appName)
+  if (videos?.length) {
+    let audioUrl: string | undefined
+    let i
+    for (i = 0; i < videos.length; i++) {
+      audioUrl = await getAudioUrlFromVideoId(serverAPI, videos[i].videoId)
+      if (audioUrl) {
+        break
+      }
+    }
+    return audioUrl
   }
   return undefined
 }
