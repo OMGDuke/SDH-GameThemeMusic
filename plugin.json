@@ -1,0 +1,10 @@
+{
+  "name": "Game Theme Music",
+  "author": "OMGDuke",
+  "flags": [],
+  "publish": {
+    "tags": ["audio"],
+    "description": "Play theme songs on your game pages",
+    "image": "https://raw.githubusercontent.com/OMGDuke/SDH-GameThemeMusic/main/assets/publish_image.png"
+  }
+}
