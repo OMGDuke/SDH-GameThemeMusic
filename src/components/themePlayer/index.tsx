@@ -21,6 +21,8 @@ export default function ThemePlayer({
       className="game-theme-music-container"
       style={{ display: 'none' }}
       autoPlay
+      loop
+      controls={false}
       src={audioUrl}
     ></audio>
   )

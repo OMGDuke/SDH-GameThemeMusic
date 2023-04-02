@@ -89,7 +89,7 @@ async function getAudioUrlFromVideoId(
       /ytInitialPlayerResponse\s*=\s*({.+?})\s*;/
     )
     if (!configJsonMatch) {
-      throw new Error('Failed to extract player response')
+      return undefined
     }
 
     const configJson = JSON.parse(configJsonMatch[1])
