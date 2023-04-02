@@ -1,5 +1,19 @@
 {
+    "about": "About",
+    "aboutDescription": "Play theme songs on your game pages",
+    "aboutLabel": "About Game Theme Music",
+    "changeThemeMusic": "Change Theme Music",
+    "deleteOverrides": "Delete Overrides",
+    "deleteOverridesLabel": "Delete all overrides",
+    "noMusicLabel": "No Music",
+    "overrides": "Overrides",
+    "play": "Play",
+    "select": "Select",
+    "selected": "Selected",
     "settings": "Settings",
+    "stop": "Stop",
+    "supportDescription": "Visit the Steam Deck Homebrew Discord deckbrew.xyz/discord",
+    "supportLabel": "Support",
     "volume": "Music Volume",
     "volumeDescription": "Adjust music volume"
 }

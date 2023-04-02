@@ -10,16 +10,13 @@ export default function ThemePlayer({
   serverAPI: ServerAPI
 }): ReactElement {
   const { state: settingsState } = useSettings()
-  const { appid: pathId } = useParams<{ appid: string }>()
-  const appDetails = appStore.GetAppOverviewByGameID(parseInt(pathId))
-  const appName = appDetails?.display_name
+  const { appid } = useParams<{ appid: string }>()
   const audioRef = useRef<HTMLAudioElement>(null)
-
-  const { audioUrl } = useThemeMusic(serverAPI, appName)
+  const { audio } = useThemeMusic(serverAPI, parseInt(appid))
 
   useEffect(() => {
-    if (audioUrl && audioRef.current) {
-      audioRef.current.src = audioUrl
+    if (audio?.audioUrl && audioRef.current) {
+      audioRef.current.src = audio?.audioUrl
       audioRef.current.volume = settingsState.volume
       audioRef.current.play()
     }
@@ -29,9 +26,9 @@ export default function ThemePlayer({
         audioRef.current.src = ''
       }
     }
-  }, [audioUrl, audioRef])
+  }, [audio?.audioUrl, audioRef])
 
-  if (!audioUrl?.length) return <></>
+  if (!audio?.audioUrl?.length) return <></>
 
   return (
     <audio

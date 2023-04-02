@@ -9,6 +9,10 @@ Play theme songs on your game pages
 
 This plugin will find a games theme music based on the games name and play it in the background. An internet connection is required. It also supports non steam games.
 
+The song that plays can be customised via the games context menu.
+
+![The song that plays can be customised via the games context menu.](./assets/screenshot2.jpg)
+
 ## Decky Loader
 
 This plugin requires [Decky Loader](https://github.com/SteamDeckHomebrew/decky-loader). Game Theme Music is available on the store.

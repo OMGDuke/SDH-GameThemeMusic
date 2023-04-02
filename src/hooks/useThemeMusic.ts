@@ -1,32 +1,41 @@
 import { ServerAPI } from 'decky-frontend-lib'
 import { useEffect, useState } from 'react'
 
-import { getAudio } from '../actions/audio'
+import { getAudio, getAudioUrlFromVideoId } from '../actions/audio'
 
-const useThemeMusic = (serverAPI: ServerAPI, appName: string | undefined) => {
-  const [audioUrl, setAudioUrl] = useState<string>()
+import { getCache, updateCache } from '../cache/musicCache'
 
-  async function refresh() {
-    if (appName?.length) {
-      const url = await getAudio(serverAPI, appName as string).catch(
-        () => undefined
-      )
-
-      if (url?.length) {
-        setAudioUrl(url)
-      }
-    }
-  }
+const useThemeMusic = (serverAPI: ServerAPI, appId: number) => {
+  const [audio, setAudio] = useState<{
+    appName: string
+    title: string
+    videoId: string
+    audioUrl: string
+  }>()
+  const appDetails = appStore.GetAppOverviewByGameID(appId)
+  const appName = appDetails?.display_name
 
   useEffect(() => {
     let ignore = false
     async function getData() {
-      const url = await getAudio(serverAPI, appName as string)
+      const cache = await getCache(appId)
+      if (cache?.disabled) {
+        return
+      }
+      if (cache?.videoId?.length) {
+        const newAudio = await getAudioUrlFromVideoId(serverAPI, {
+          appName,
+          title: cache.title,
+          id: cache.videoId
+        })
+        return setAudio(newAudio)
+      }
+      const newAudio = await getAudio(serverAPI, appName as string)
       if (ignore) {
         return
       }
-      if (!url?.length) return
-      setAudioUrl(url)
+      if (!newAudio?.audioUrl?.length) return
+      setAudio({ ...newAudio, appName })
     }
     if (appName?.length) {
       getData()
@@ -37,24 +46,17 @@ const useThemeMusic = (serverAPI: ServerAPI, appName: string | undefined) => {
   }, [appName])
 
   useEffect(() => {
-    let ignore = false
-    async function getData() {
-      if (ignore) {
-        return
-      }
+    if (audio?.videoId) {
+      updateCache(appId, {
+        appName,
+        title: audio.title,
+        videoId: audio.videoId
+      })
     }
-
-    if (appName?.length) {
-      getData()
-    }
-    return () => {
-      ignore = true
-    }
-  }, [appName])
+  }, [audio, appName])
 
   return {
-    audioUrl,
-    refresh
+    audio
   }
 }
 

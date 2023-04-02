@@ -21,10 +21,10 @@ type YouTubeInitialData = {
   }
 }
 
-async function getYouTubeSearchResults(
+export async function getYouTubeSearchResults(
   serverAPI: ServerAPI,
   appName: string
-): Promise<{ title: string; videoId: string }[] | undefined> {
+): Promise<{ appName: string; title: string; id: string }[] | undefined> {
   const req = {
     method: 'GET',
     url: `https://www.youtube.com/results?search_query=${encodeURIComponent(
@@ -41,7 +41,9 @@ async function getYouTubeSearchResults(
 
     if (match) {
       const ytInitialData: YouTubeInitialData = JSON.parse(match[1])
-      const results: { title: string; videoId: string }[] | undefined =
+      const results:
+        | { appName: string; title: string; id: string }[]
+        | undefined =
         ytInitialData?.contents?.twoColumnSearchResultsRenderer?.primaryContents?.sectionListRenderer?.contents
           ?.find(
             (obj) =>
@@ -58,12 +60,11 @@ async function getYouTubeSearchResults(
             Object.prototype.hasOwnProperty.call(obj, 'videoRenderer')
           )
           .map((res) => ({
+            appName,
             title: res?.videoRenderer?.title?.runs?.[0]?.text,
-            videoId: res?.videoRenderer?.videoId
+            id: res?.videoRenderer?.videoId
           }))
-          .filter(
-            (res: { title: string; videoId: string }) => res.videoId?.length
-          )
+          .filter((res: { title: string; id: string }) => res.id?.length)
       return results
     } else {
       return undefined
@@ -72,13 +73,20 @@ async function getYouTubeSearchResults(
   return undefined
 }
 
-async function getAudioUrlFromVideoId(
+export async function getAudioUrlFromVideoId(
   serverAPI: ServerAPI,
-  videoId: string
-): Promise<string | undefined> {
+  video: {
+    appName: string
+    title: string
+    id: string
+  }
+): Promise<
+  | { appName: string; title: string; videoId: string; audioUrl: string }
+  | undefined
+> {
   const req = {
     method: 'GET',
-    url: `https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}`
+    url: `https://www.youtube.com/watch?v=${encodeURIComponent(video.id)}`
   }
   const res = await serverAPI.callServerMethod<
     { method: string; url: string },
@@ -104,9 +112,14 @@ async function getAudioUrlFromVideoId(
           .find((s: string) => s.startsWith('s='))
           .substr(2)
       : undefined
-    return `${streamMap.url}&${
-      signature ? `sig=${signature}` : 'ratebypass=yes'
-    }`
+    return {
+      appName: video.appName,
+      title: video.title,
+      videoId: video.id,
+      audioUrl: `${streamMap.url}&${
+        signature ? `sig=${signature}` : 'ratebypass=yes'
+      }`
+    }
   }
   return undefined
 }
@@ -114,18 +127,23 @@ async function getAudioUrlFromVideoId(
 export async function getAudio(
   serverAPI: ServerAPI,
   appName: string
-): Promise<string | undefined> {
+): Promise<
+  | { appName: string; title: string; videoId: string; audioUrl: string }
+  | undefined
+> {
   const videos = await getYouTubeSearchResults(serverAPI, appName)
   if (videos?.length) {
-    let audioUrl: string | undefined
+    let audio:
+      | { appName: string; title: string; videoId: string; audioUrl: string }
+      | undefined
     let i
     for (i = 0; i < videos.length; i++) {
-      audioUrl = await getAudioUrlFromVideoId(serverAPI, videos[i].videoId)
-      if (audioUrl) {
+      audio = await getAudioUrlFromVideoId(serverAPI, videos[i])
+      if (audio?.audioUrl?.length) {
         break
       }
     }
-    return audioUrl
+    return audio
   }
   return undefined
 }
