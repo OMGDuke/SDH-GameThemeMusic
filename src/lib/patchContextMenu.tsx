@@ -25,7 +25,6 @@ function ChangeLanguageButton({ appId }: { appId: number }) {
   )
 }
 
-// Add button second to last
 const spliceArtworkItem = (children: any[], appid: number) => {
   children.splice(-1, 0, <ChangeLanguageButton appId={appid} />)
 }
@@ -47,13 +46,11 @@ const contextMenuPatch = (LibraryContextMenu: any) => {
             )
           ) {
             let updatedAppid: number = appid
-            // find the first menu component that has the correct appid assigned to _owner
             const parentOverview = nextProps.children.find(
               (x: any) =>
                 x?._owner?.pendingProps?.overview?.appid &&
                 x._owner.pendingProps.overview.appid !== appid
             )
-            // if found then use that appid
             if (parentOverview) {
               updatedAppid = parentOverview._owner.pendingProps.overview.appid
             }

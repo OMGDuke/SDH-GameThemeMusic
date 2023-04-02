@@ -42,9 +42,7 @@ function patchLibraryApp(serverAPI: ServerAPI) {
                 return ret2
               }
 
-              container.props.children.splice(
-                -1,
-                0,
+              container.props.children.push(
                 <SettingsProvider>
                   <ThemePlayer serverAPI={serverAPI} />
                 </SettingsProvider>
