@@ -23,7 +23,6 @@ const useThemeMusic = (serverAPI: ServerAPI, appId: number) => {
         return
       }
       if (cache?.videoId?.length) {
-        console.log('GET CACHED AUDIO')
         const newAudio = await getAudioUrlFromVideoId(serverAPI, {
           appName,
           title: cache.title,
