@@ -11,7 +11,7 @@ This plugin will find a games theme music based on the games name and play it in
 
 ## Decky Loader
 
-This plugin requires [Decky Loader](https://github.com/SteamDeckHomebrew/decky-loader). ProtonDB Badges is available on the store.
+This plugin requires [Decky Loader](https://github.com/SteamDeckHomebrew/decky-loader). Game Theme Music is available on the store.
 
 ## Steam Deck Homebrew Discord
 [![Chat](https://img.shields.io/badge/chat-on%20discord-7289da.svg)](https://deckbrew.xyz/discord)
