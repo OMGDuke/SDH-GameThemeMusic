@@ -16,6 +16,10 @@ This plugin requires [Decky Loader](https://github.com/SteamDeckHomebrew/decky-l
 ## Steam Deck Homebrew Discord
 [![Chat](https://img.shields.io/badge/chat-on%20discord-7289da.svg)](https://deckbrew.xyz/discord)
 
+## Other Plugins
+
+Check out my other plugin [ProtonDB Badges ❤️](https://github.com/OMGDuke/protondb-decky)
+
 ## Contributors
 
 <!-- readme: collaborators,contributors -start -->
