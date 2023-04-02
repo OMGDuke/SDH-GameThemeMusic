@@ -59,3 +59,4 @@ jobs:
               with:
                   artifacts: 'SDH-GameThemeMusic.zip,SDH-GameThemeMusic.tar.gz'
                   allowUpdates: true
+                  token: ${{ secrets.GITHUB_TOKEN }}
