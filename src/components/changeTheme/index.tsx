@@ -5,10 +5,8 @@ import useTranslations from '../../hooks/useTranslations'
 import ChangePage from './changePage'
 import AboutPage from './aboutPage'
 import { SettingsProvider } from '../../context/settingsContext'
-import {
-  getAudioUrlFromVideoId,
-  getYouTubeSearchResults
-} from '../../actions/audio'
+import { getYouTubeSearchResults } from '../../actions/audio'
+import YouTubeVideo from '../../../types/YouTube'
 
 export default function ChangeTheme({ serverAPI }: { serverAPI: ServerAPI }) {
   const [currentTab, setCurrentTab] = useState<string>()
@@ -17,50 +15,35 @@ export default function ChangeTheme({ serverAPI }: { serverAPI: ServerAPI }) {
   const appDetails = appStore.GetAppOverviewByGameID(parseInt(appid))
   const appName = appDetails?.display_name
 
-  const [audios, setAudios] = useState<
-    {
-      appName: string
-      title: string
-      videoId: string
-      audioUrl: string
-      isPlaying: boolean
-    }[]
+  const [videos, setVideos] = useState<
+    (YouTubeVideo & { isPlaying: boolean })[]
   >([])
   const [loading, setLoading] = useState(true)
+  const [searchTerm, setSearchTerm] = useState<string>()
 
   useEffect(() => {
     async function getData() {
       setLoading(true)
-      const res = await getYouTubeSearchResults(serverAPI, appName)
-      if (res?.length) {
-        const audios = await Promise.all(
-          res.map(async (v) => await getAudioUrlFromVideoId(serverAPI, v))
-        )
-        const filteredAudios = audios
-          .filter((a) => a?.audioUrl?.length)
-          .map((a) => ({ ...a, isPlaying: false })) as {
-          appName: string
-          title: string
-          videoId: string
-          audioUrl: string
-          isPlaying: boolean
-        }[]
-        setAudios(filteredAudios || [])
-        setLoading(false)
-      }
+      const res = await getYouTubeSearchResults(
+        serverAPI,
+        searchTerm?.length ? searchTerm : appName,
+        Boolean(searchTerm?.length)
+      )
+      setVideos(res?.map((v) => ({ ...v, isPlaying: false })) || [])
+      setLoading(false)
     }
-    if (appid) {
+    if (appName) {
       getData()
     }
-  }, [])
+  }, [searchTerm, appName])
 
   function handlePlay(index: number, startPlay: boolean) {
-    setAudios((oldAudios) => {
-      const newAudios = oldAudios.map((a, aIndex) => ({
-        ...a,
-        isPlaying: aIndex === index ? startPlay : false
+    setVideos((oldVideos) => {
+      const newVideos = oldVideos.map((v, vIndex) => ({
+        ...v,
+        isPlaying: vIndex === index ? startPlay : false
       }))
-      return newAudios
+      return newVideos
     })
   }
 
@@ -82,9 +65,11 @@ export default function ChangeTheme({ serverAPI }: { serverAPI: ServerAPI }) {
             content: (
               <SettingsProvider>
                 <ChangePage
-                  audios={audios}
+                  serverAPI={serverAPI}
+                  videos={videos}
                   loading={loading}
                   handlePlay={handlePlay}
+                  customSearch={setSearchTerm}
                 />
               </SettingsProvider>
             ),
