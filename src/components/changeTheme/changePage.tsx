@@ -3,7 +3,9 @@ import {
   Focusable,
   PanelSection,
   PanelSectionRow,
+  ServerAPI,
   SteamSpinner,
+  TextField,
   useParams
 } from 'decky-frontend-lib'
 import React, { useEffect, useState } from 'react'
@@ -11,21 +13,21 @@ import { useSettings } from '../../context/settingsContext'
 import AudioPlayer from './audioPlayer'
 import { getCache, updateCache } from '../../cache/musicCache'
 import useTranslations from '../../hooks/useTranslations'
+import YouTubeVideo from '../../../types/YouTube'
+import NoMusic from './noMusic'
 
 export default function ChangePage({
-  audios,
+  customSearch,
+  handlePlay,
   loading,
-  handlePlay
+  serverAPI,
+  videos
 }: {
-  audios: {
-    appName: string
-    title: string
-    videoId: string
-    audioUrl: string
-    isPlaying: boolean
-  }[]
+  videos: (YouTubeVideo & { isPlaying: boolean })[]
   loading: boolean
   handlePlay: (idx: number, startPlaying: boolean) => void
+  serverAPI: ServerAPI
+  customSearch: (term: string | undefined) => void
 }) {
   const t = useTranslations()
   const { state: settingsState } = useSettings()
@@ -33,84 +35,94 @@ export default function ChangePage({
   const appDetails = appStore.GetAppOverviewByGameID(parseInt(appid))
   const appName = appDetails?.display_name
   const [selected, setSelected] = useState<string | undefined>()
+  const [searchTerm, setSearchTerm] = useState('')
 
   useEffect(() => {
     async function getData() {
       const cache = await getCache(parseInt(appid))
-      let newSelected
-      if (cache?.disabled) {
-        newSelected = ''
-      } else if (!cache?.videoId?.length) {
-        newSelected = undefined
-      } else {
-        newSelected = cache?.videoId
-      }
-      setSelected(newSelected)
+      setSelected(cache?.videoId)
     }
     getData()
   }, [appid])
 
   function selectNewAudio(audio: {
-    appName: string
     title: string
-    videoId: string
+    videoId: string | undefined
     audioUrl: string
-    disabled: boolean
   }) {
-    let newSelected
-    if (audio?.disabled) {
-      newSelected = ''
-    } else if (!audio.videoId?.length) {
-      newSelected = undefined
-    } else {
-      newSelected = audio.videoId
-    }
-    setSelected(newSelected)
-    updateCache(parseInt(appid), audio)
+    setSelected(audio.videoId)
+    updateCache(parseInt(appid), { videoId: audio.videoId })
   }
 
   return (
     <div>
-      <h1>{appName}</h1>
+      <h2 style={{ margin: '0' }}>{appName}</h2>
+      <PanelSection title={t('search')}>
+        <PanelSectionRow>
+          <Focusable
+            style={{
+              display: 'grid',
+              gap: '6px',
+              gridTemplateColumns: '2fr max-content max-content',
+              height: 'max-content'
+            }}
+          >
+            <TextField
+              disabled={loading}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              value={searchTerm}
+            />
+            <DialogButton
+              disabled={loading || !searchTerm?.length}
+              focusable={!loading && Boolean(searchTerm?.length)}
+              onClick={() => customSearch(searchTerm)}
+            >
+              {t('search')}
+            </DialogButton>
+            <DialogButton
+              disabled={loading || !searchTerm?.length}
+              focusable={!loading && Boolean(searchTerm?.length)}
+              onClick={() => {
+                setSearchTerm('')
+                customSearch(undefined)
+              }}
+            >
+              {t('clear')}
+            </DialogButton>
+          </Focusable>
+        </PanelSectionRow>
+      </PanelSection>
       {loading ? (
         <SteamSpinner />
       ) : (
         <>
-          <PanelSection title={t('noMusicLabel')}>
-            <PanelSectionRow>
-              <Focusable style={{ display: 'flex' }}>
-                <DialogButton focusable={false} disabled>
-                  {t('play')}
-                </DialogButton>
-                <DialogButton
-                  disabled={selected === ''}
-                  focusable={selected !== ''}
-                  onClick={() =>
-                    selectNewAudio({
-                      appName: appName,
-                      title: '',
-                      videoId: '',
-                      audioUrl: '',
-                      disabled: true
-                    })
-                  }
-                >
-                  {selected === '' ? t('selected') : t('select')}
-                </DialogButton>
-              </Focusable>
-            </PanelSectionRow>
-          </PanelSection>
-          {audios.map((audio, index) => (
-            <AudioPlayer
-              audio={audio}
-              volume={settingsState.volume}
-              handlePlay={(status) => {
-                handlePlay(index, status)
-              }}
-              selected={selected === audio.videoId}
+          <Focusable
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+              gap: '10px',
+              flexDirection: 'row'
+            }}
+          >
+            <NoMusic
+              selected={selected === ''}
               selectNewAudio={selectNewAudio}
             />
-          ))}
+            {videos.map((video, index) => (
+              <AudioPlayer
+                key={video.id}
+                serverAPI={serverAPI}
+                video={video}
+                volume={settingsState.volume}
+                handlePlay={(status) => {
+                  handlePlay(index, status)
+                }}
+                selected={selected === video.id}
+                selectNewAudio={selectNewAudio}
+              />
+            ))}
+          </Focusable>
         </>
       )}
     </div>

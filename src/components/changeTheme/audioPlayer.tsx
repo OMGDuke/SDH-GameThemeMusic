@@ -1,39 +1,44 @@
-import {
-  DialogButton,
-  Focusable,
-  PanelSection,
-  PanelSectionRow
-} from 'decky-frontend-lib'
-import React, { useEffect, useRef } from 'react'
+import { DialogButton, Focusable, ServerAPI } from 'decky-frontend-lib'
+import React, { useEffect, useRef, useState } from 'react'
 import useTranslations from '../../hooks/useTranslations'
+import { getAudioUrlFromVideoId } from '../../actions/audio'
+import YouTubeVideo from '../../../types/YouTube'
 
 export default function AudioPlayer({
-  audio,
-  volume,
   handlePlay,
   selected,
-  selectNewAudio
+  selectNewAudio,
+  serverAPI,
+  video,
+  volume
 }: {
-  audio: {
-    appName: string
-    title: string
-    videoId: string
-    audioUrl: string
-    isPlaying: boolean
-  }
+  serverAPI: ServerAPI
+  video: YouTubeVideo & { isPlaying: boolean }
   volume: number
   handlePlay: (startPlaying: boolean) => void
   selected: boolean
   selectNewAudio: (audio: {
-    appName: string
     title: string
-    videoId: string
+    videoId: string | undefined
     audioUrl: string
-    disabled: false
   }) => void
 }) {
   const t = useTranslations()
   const audioRef = useRef<HTMLAudioElement>(null)
+  const [loading, setLoading] = useState(true)
+  const [audioUrl, setAudio] = useState<string | undefined>()
+
+  useEffect(() => {
+    async function getData() {
+      setLoading(true)
+      const res = await getAudioUrlFromVideoId(serverAPI, video)
+      setAudio(res)
+      setLoading(false)
+    }
+    if (video.id.length) {
+      getData()
+    }
+  }, [video.id])
 
   useEffect(() => {
     if (audioRef.current) {
@@ -43,50 +48,97 @@ export default function AudioPlayer({
 
   useEffect(() => {
     if (audioRef.current) {
-      audio.isPlaying ? audioRef.current.play() : audioRef.current.pause()
+      video.isPlaying ? audioRef.current.play() : audioRef.current.pause()
     }
-  }, [audio.isPlaying])
+  }, [video.isPlaying])
 
   function togglePlay() {
     if (audioRef?.current) {
       audioRef.current.currentTime = 0
-      handlePlay(!audio.isPlaying)
+      handlePlay(!video.isPlaying)
     }
   }
 
   function selectAudio() {
-    selectNewAudio({
-      appName: audio.appName,
-      title: audio.title,
-      videoId: audio.videoId,
-      audioUrl: audio.audioUrl,
-      disabled: false
-    })
+    if (audioUrl?.length && video.id.length)
+      selectNewAudio({
+        title: video.title,
+        videoId: video.id,
+        audioUrl: audioUrl
+      })
   }
+  if (!loading && !audioUrl) return <></>
   return (
-    <PanelSection title={audio.title}>
+    <div>
+      <Focusable
+        style={{
+          background: selected
+            ? 'var(--main-light-blue-background)'
+            : 'var(--main-editor-bg-color)',
+          borderRadius: '6px',
+          display: 'grid',
+          gridTemplateRows: '129px max-content max-content',
+          overflow: 'hidden',
+          padding: '10px',
+          width: '230px'
+        }}
+      >
+        <img
+          src={video.thumbnail}
+          alt={video.title}
+          style={{
+            overflow: 'hidden',
+            width: '230px',
+            height: '129px',
+            borderRadius: '6px'
+          }}
+        />
+        <p
+          style={{
+            color: selected
+              ? 'var(--main-editor-bg-color)'
+              : 'var(--main-editor-text-color)',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            width: '230px',
+            height: '68px'
+          }}
+        >
+          {video.title}
+        </p>
+
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '6px',
+            width: '230px'
+          }}
+        >
+          <DialogButton
+            onClick={togglePlay}
+            disabled={loading}
+            focusable={!loading}
+          >
+            {video.isPlaying ? t('stop') : t('play')}
+          </DialogButton>
+          <DialogButton
+            disabled={selected || loading}
+            focusable={!selected && !loading}
+            onClick={selectAudio}
+          >
+            {selected ? t('selected') : t('select')}
+          </DialogButton>
+        </div>
+      </Focusable>
       <audio
         ref={audioRef}
-        src={audio.audioUrl}
+        src={audioUrl}
         autoPlay={false}
         controlsList="nodownload"
         onPlay={() => audioRef.current?.play()}
         onPause={() => audioRef.current?.pause()}
       ></audio>
-      <PanelSectionRow>
-        <Focusable style={{ display: 'flex', gap: '6px' }}>
-          <DialogButton onClick={togglePlay}>
-            {audio.isPlaying ? t('stop') : t('play')}
-          </DialogButton>
-          <DialogButton
-            disabled={selected}
-            focusable={!selected}
-            onClick={selectAudio}
-          >
-            {selected ? t('selected') : t('select')}
-          </DialogButton>
-        </Focusable>
-      </PanelSectionRow>
-    </PanelSection>
+    </div>
   )
 }

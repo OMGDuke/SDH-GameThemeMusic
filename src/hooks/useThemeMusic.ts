@@ -6,12 +6,9 @@ import { getAudio, getAudioUrlFromVideoId } from '../actions/audio'
 import { getCache, updateCache } from '../cache/musicCache'
 
 const useThemeMusic = (serverAPI: ServerAPI, appId: number) => {
-  const [audio, setAudio] = useState<{
-    appName: string
-    title: string
-    videoId: string
-    audioUrl: string
-  }>()
+  const [audio, setAudio] = useState<
+    { videoId: string; audioUrl: string } | undefined
+  >()
   const appDetails = appStore.GetAppOverviewByGameID(appId)
   const appName = appDetails?.display_name
 
@@ -19,23 +16,26 @@ const useThemeMusic = (serverAPI: ServerAPI, appId: number) => {
     let ignore = false
     async function getData() {
       const cache = await getCache(appId)
-      if (cache?.disabled) {
-        return
+      if (cache?.videoId && !cache?.videoId?.length) {
+        return setAudio({ videoId: '', audioUrl: '' })
       }
       if (cache?.videoId?.length) {
         const newAudio = await getAudioUrlFromVideoId(serverAPI, {
-          appName,
-          title: cache.title,
+          title: '',
           id: cache.videoId
         })
-        return setAudio(newAudio)
+        if (newAudio?.length) {
+          return setAudio({ videoId: cache.videoId, audioUrl: newAudio })
+        }
       }
       const newAudio = await getAudio(serverAPI, appName as string)
       if (ignore) {
         return
       }
-      if (!newAudio?.audioUrl?.length) return
-      setAudio({ ...newAudio, appName })
+      if (!newAudio?.audioUrl?.length) {
+        return setAudio({ videoId: '', audioUrl: '' })
+      }
+      setAudio(newAudio)
     }
     if (appName?.length) {
       getData()
@@ -48,8 +48,6 @@ const useThemeMusic = (serverAPI: ServerAPI, appId: number) => {
   useEffect(() => {
     if (audio?.videoId) {
       updateCache(appId, {
-        appName,
-        title: audio.title,
         videoId: audio.videoId
       })
     }

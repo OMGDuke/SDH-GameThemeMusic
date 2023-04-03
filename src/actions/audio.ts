@@ -1,4 +1,5 @@
 import { ServerAPI } from 'decky-frontend-lib'
+import YouTubeVideo from '../../types/YouTube'
 
 type YouTubeInitialData = {
   contents: {
@@ -11,6 +12,9 @@ type YouTubeInitialData = {
                 videoRenderer: {
                   title: { runs: { text: string }[] }
                   videoId: string
+                  thumbnail: {
+                    thumbnails: { url: string }[]
+                  }
                 }
               }[]
             }
@@ -23,13 +27,16 @@ type YouTubeInitialData = {
 
 export async function getYouTubeSearchResults(
   serverAPI: ServerAPI,
-  appName: string
-): Promise<{ appName: string; title: string; id: string }[] | undefined> {
+  appName: string,
+  customSearch?: boolean
+): Promise<YouTubeVideo[] | undefined> {
+  const searchTerm = `${encodeURIComponent(appName)}${
+    customSearch ? '' : '%20Theme%20Music'
+  }`
   const req = {
     method: 'GET',
-    url: `https://www.youtube.com/results?search_query=${encodeURIComponent(
-      appName
-    )}%20Theme%20Music`
+    url: `https://www.youtube.com/results?search_query=${searchTerm}&sp=EgIQAQ%253D%253D`,
+    timeout: 8000
   }
   const res = await serverAPI.callServerMethod<
     { method: string; url: string },
@@ -41,9 +48,7 @@ export async function getYouTubeSearchResults(
 
     if (match) {
       const ytInitialData: YouTubeInitialData = JSON.parse(match[1])
-      const results:
-        | { appName: string; title: string; id: string }[]
-        | undefined =
+      const results: YouTubeVideo[] | undefined =
         ytInitialData?.contents?.twoColumnSearchResultsRenderer?.primaryContents?.sectionListRenderer?.contents
           ?.find(
             (obj) =>
@@ -59,11 +64,14 @@ export async function getYouTubeSearchResults(
           ?.itemSectionRenderer?.contents?.filter((obj) =>
             Object.prototype.hasOwnProperty.call(obj, 'videoRenderer')
           )
-          .map((res) => ({
-            appName,
-            title: res?.videoRenderer?.title?.runs?.[0]?.text,
-            id: res?.videoRenderer?.videoId
-          }))
+          .map((res) => {
+            return {
+              appName,
+              title: res?.videoRenderer?.title?.runs?.[0]?.text,
+              id: res?.videoRenderer?.videoId,
+              thumbnail: res?.videoRenderer?.thumbnail?.thumbnails?.[0]?.url
+            }
+          })
           .filter((res: { title: string; id: string }) => res.id?.length)
       return results
     } else {
@@ -75,15 +83,8 @@ export async function getYouTubeSearchResults(
 
 export async function getAudioUrlFromVideoId(
   serverAPI: ServerAPI,
-  video: {
-    appName: string
-    title: string
-    id: string
-  }
-): Promise<
-  | { appName: string; title: string; videoId: string; audioUrl: string }
-  | undefined
-> {
+  video: { title: string; id: string }
+): Promise<string | undefined> {
   const req = {
     method: 'GET',
     url: `https://www.youtube.com/watch?v=${encodeURIComponent(video.id)}`
@@ -101,7 +102,7 @@ export async function getAudioUrlFromVideoId(
     }
 
     const configJson = JSON.parse(configJsonMatch[1])
-    const streamMap = configJson.streamingData.adaptiveFormats.filter(
+    const streamMap = configJson?.streamingData?.adaptiveFormats?.filter(
       (f: { mimeType: string }) => f.mimeType.startsWith('audio/')
     )[0]
     if (!streamMap?.url) return undefined
@@ -112,14 +113,9 @@ export async function getAudioUrlFromVideoId(
           .find((s: string) => s.startsWith('s='))
           .substr(2)
       : undefined
-    return {
-      appName: video.appName,
-      title: video.title,
-      videoId: video.id,
-      audioUrl: `${streamMap.url}&${
-        signature ? `sig=${signature}` : 'ratebypass=yes'
-      }`
-    }
+    return `${streamMap.url}&${
+      signature ? `sig=${signature}` : 'ratebypass=yes'
+    }`
   }
   return undefined
 }
@@ -127,19 +123,15 @@ export async function getAudioUrlFromVideoId(
 export async function getAudio(
   serverAPI: ServerAPI,
   appName: string
-): Promise<
-  | { appName: string; title: string; videoId: string; audioUrl: string }
-  | undefined
-> {
+): Promise<{ videoId: string; audioUrl: string } | undefined> {
   const videos = await getYouTubeSearchResults(serverAPI, appName)
   if (videos?.length) {
-    let audio:
-      | { appName: string; title: string; videoId: string; audioUrl: string }
-      | undefined
+    let audio: { videoId: string; audioUrl: string } | undefined
     let i
     for (i = 0; i < videos.length; i++) {
-      audio = await getAudioUrlFromVideoId(serverAPI, videos[i])
-      if (audio?.audioUrl?.length) {
+      const audioUrl = await getAudioUrlFromVideoId(serverAPI, videos[i])
+      if (audioUrl?.length) {
+        audio = { audioUrl, videoId: videos[i].id }
         break
       }
     }
