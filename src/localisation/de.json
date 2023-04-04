@@ -1,10 +1,10 @@
 {
     "about": "Über",
     "aboutDescription": "Spiel Titellieder auf der Spiele Seite",
-    "aboutLabel": "Über Spiel Titellied",
+    "aboutLabel": "Über Spiel Titellieder",
     "changeThemeMusic": "Ändere das Titellied",
     "clear": "Löschen",
-    "deleteOverrides": "Lösche die Überschreibungen",
+    "deleteOverrides": "Überschreibungen löschen",
     "deleteOverridesLabel": "Lösche alle Überschreibungen",
     "noMusicLabel": "Keine Musik",
     "overrides": "Überschreibungen",
@@ -17,5 +17,5 @@
     "supportDescription": "Besuche den Steam Deck Homebrew Discord deckbrew.xyz/discord",
     "supportLabel": "Hilfe",
     "volume": "Musik Lautstärke",
-    "volumeDescription": "Adjust music volume"
+    "volumeDescription": "Musik Lautstärke anpassen"
 }
