@@ -11,11 +11,10 @@ import {
 } from 'decky-frontend-lib'
 import useTranslations from '../hooks/useTranslations'
 
-function ChangeLanguageButton({ appId }: { appId: number }) {
+function ChangeMusicButton({ appId }: { appId: number }) {
   const t = useTranslations()
   return (
     <MenuItem
-      key="game-theme-music-change-music"
       onSelected={() => {
         Navigation.Navigate(`/gamethememusic/${appId}`)
       }}
@@ -26,7 +25,11 @@ function ChangeLanguageButton({ appId }: { appId: number }) {
 }
 
 const spliceArtworkItem = (children: any[], appid: number) => {
-  children.splice(-1, 0, <ChangeLanguageButton appId={appid} />)
+  children.splice(
+    -1,
+    0,
+    <ChangeMusicButton key="game-theme-music-change-music" appId={appid} />
+  )
 }
 
 const contextMenuPatch = (LibraryContextMenu: any) => {

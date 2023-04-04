@@ -1,6 +1,6 @@
 {
   "name": "sdh-gamethememusic",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Play theme songs on your game pages",
   "scripts": {
     "build": "shx rm -rf dist && rollup -c",
@@ -45,7 +45,7 @@
     "typescript": "^5.0.3"
   },
   "dependencies": {
-    "decky-frontend-lib": "^3.20.4",
+    "decky-frontend-lib": "^3.20.5",
     "localforage": "^1.10.0",
     "react-icons": "^4.8.0"
   },

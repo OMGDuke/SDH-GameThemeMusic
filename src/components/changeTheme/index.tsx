@@ -22,6 +22,7 @@ export default function ChangeTheme({ serverAPI }: { serverAPI: ServerAPI }) {
   const [searchTerm, setSearchTerm] = useState<string>()
 
   useEffect(() => {
+    let ignore = false
     async function getData() {
       setLoading(true)
       const res = await getYouTubeSearchResults(
@@ -29,11 +30,17 @@ export default function ChangeTheme({ serverAPI }: { serverAPI: ServerAPI }) {
         searchTerm?.length ? searchTerm : appName,
         Boolean(searchTerm?.length)
       )
+      if (ignore) {
+        return
+      }
       setVideos(res?.map((v) => ({ ...v, isPlaying: false })) || [])
       setLoading(false)
     }
     if (appName) {
       getData()
+    }
+    return () => {
+      ignore = true
     }
   }, [searchTerm, appName])
 
