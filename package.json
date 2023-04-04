@@ -1,6 +1,6 @@
 {
   "name": "sdh-gamethememusic",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Play theme songs on your game pages",
   "scripts": {
     "build": "shx rm -rf dist && rollup -c",
@@ -31,23 +31,23 @@
     "@rollup/plugin-replace": "^4.0.0",
     "@rollup/plugin-typescript": "^9.0.2",
     "@types/react": "16.14.0",
-    "@types/webpack": "^5.28.0",
-    "@typescript-eslint/eslint-plugin": "^5.53.0",
-    "@typescript-eslint/parser": "^5.53.0",
-    "eslint": "^8.34.0",
-    "eslint-config-prettier": "^8.6.0",
+    "@types/webpack": "^5.28.1",
+    "@typescript-eslint/eslint-plugin": "^5.57.1",
+    "@typescript-eslint/parser": "^5.57.1",
+    "eslint": "^8.37.0",
+    "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
-    "prettier": "^2.8.4",
+    "prettier": "^2.8.7",
     "rollup": "^2.79.1",
     "rollup-plugin-import-assets": "^1.1.1",
     "shx": "^0.3.4",
     "tslib": "^2.5.0",
-    "typescript": "^4.9.5"
+    "typescript": "^5.0.3"
   },
   "dependencies": {
-    "decky-frontend-lib": "^3.19.1",
+    "decky-frontend-lib": "^3.20.4",
     "localforage": "^1.10.0",
-    "react-icons": "^4.7.1"
+    "react-icons": "^4.8.0"
   },
   "pnpm": {
     "peerDependencyRules": {
