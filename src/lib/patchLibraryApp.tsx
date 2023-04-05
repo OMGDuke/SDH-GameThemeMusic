@@ -3,11 +3,19 @@ import {
   ServerAPI,
   wrapReactType,
   findInReactTree,
-  appDetailsClasses
+  appDetailsClasses,
+  appDetailsHeaderClasses,
+  wrapReactClass
 } from 'decky-frontend-lib'
 import React, { ReactElement } from 'react'
 import ThemePlayer from '../components/themePlayer'
 import { SettingsProvider } from '../context/settingsContext'
+
+function addVideoToBackground(container: any): any {
+  const class1 = appDetailsClasses.Header
+  const class2 = appDetailsHeaderClasses.HeaderBackgroundImage
+  return container
+}
 
 function patchLibraryApp(serverAPI: ServerAPI) {
   return serverAPI.routerHook.addPatch(
@@ -38,11 +46,88 @@ function patchLibraryApp(serverAPI: ServerAPI) {
                     appDetailsClasses.InnerContainer
                   )
               )
+              const header = findInReactTree(container, (x: ReactElement) => {
+                return x?.props?.className?.includes(appDetailsClasses.Header)
+              })
+
+              wrapReactClass(header)
+              afterPatch(header.type.prototype, 'render', (_3, ret3) => {
+                console.log(ret3)
+                ret3.props.children.push(
+                  <div
+                    style={{
+                      position: 'absolute',
+                      height: '100vh',
+                      width: '100vw',
+                      background: 'red',
+                      top: 0,
+                      left: 0,
+                      zIndex: 100
+                    }}
+                  >
+                    HELLO THERE
+                  </div>
+                )
+                const topCapsule = findInReactTree(ret3, (x: ReactElement) => {
+                  return (
+                    x?.props &&
+                    Object.prototype.hasOwnProperty.call(
+                      x?.props,
+                      'editMode'
+                    ) &&
+                    Object.prototype.hasOwnProperty.call(
+                      x?.props,
+                      'hasHeroImage'
+                    )
+                  )
+                })
+                const backgroundImage = findInReactTree(
+                  topCapsule,
+                  (x: ReactElement) => {
+                    return (
+                      x?.props &&
+                      Object.prototype.hasOwnProperty.call(
+                        x?.props,
+                        'editMode'
+                      ) &&
+                      Object.prototype.hasOwnProperty.call(x?.props, 'haslogo')
+                    )
+                  }
+                )
+                wrapReactClass(backgroundImage)
+                afterPatch(
+                  backgroundImage.type.prototype,
+                  'render',
+                  (_4, ret4) => {
+                    ret4.props.children.push(
+                      <div
+                        style={{
+                          position: 'absolute',
+                          height: '100vh',
+                          width: '100vw',
+                          background: 'red',
+                          top: 0,
+                          left: 0,
+                          zIndex: 100
+                        }}
+                      >
+                        HELLO THERE
+                      </div>
+                    )
+                    return ret4
+                  }
+                )
+
+                return ret3
+              })
+
               if (typeof container !== 'object') {
                 return ret2
               }
 
-              container.props.children.push(
+              const containerWithBackground = addVideoToBackground(container)
+
+              containerWithBackground.props.children.push(
                 <SettingsProvider>
                   <ThemePlayer serverAPI={serverAPI} />
                 </SettingsProvider>
