@@ -3,12 +3,16 @@ import { useEffect, useState } from 'react'
 
 import { getAudio, getAudioUrlFromVideoId } from '../actions/audio'
 
-import { getCache, updateCache } from '../cache/musicCache'
+import { getCache } from '../cache/musicCache'
+import { useSettings } from '../context/settingsContext'
 
 const useThemeMusic = (serverAPI: ServerAPI, appId: number) => {
-  const [audio, setAudio] = useState<
-    { videoId: string; audioUrl: string } | undefined
-  >()
+  const { state: settingsState } = useSettings()
+  console.log('defaultMuted', settingsState.defaultMuted)
+  const [audio, setAudio] = useState<{ videoId: string; audioUrl: string }>({
+    videoId: '',
+    audioUrl: ''
+  })
   const appDetails = appStore.GetAppOverviewByGameID(appId)
   const appName = appDetails?.display_name
 
@@ -16,10 +20,9 @@ const useThemeMusic = (serverAPI: ServerAPI, appId: number) => {
     let ignore = false
     async function getData() {
       const cache = await getCache(appId)
-      if (cache?.videoId && !cache?.videoId?.length) {
+      if (cache?.videoId?.length == 0) {
         return setAudio({ videoId: '', audioUrl: '' })
-      }
-      if (cache?.videoId?.length) {
+      } else if (cache?.videoId?.length) {
         const newAudio = await getAudioUrlFromVideoId(serverAPI, {
           title: '',
           id: cache.videoId
@@ -27,15 +30,18 @@ const useThemeMusic = (serverAPI: ServerAPI, appId: number) => {
         if (newAudio?.length) {
           return setAudio({ videoId: cache.videoId, audioUrl: newAudio })
         }
-      }
-      const newAudio = await getAudio(serverAPI, appName as string)
-      if (ignore) {
-        return
-      }
-      if (!newAudio?.audioUrl?.length) {
+      } else if (settingsState.defaultMuted) {
         return setAudio({ videoId: '', audioUrl: '' })
+      } else {
+        const newAudio = await getAudio(serverAPI, appName as string)
+        if (ignore) {
+          return
+        }
+        if (!newAudio?.audioUrl?.length) {
+          return setAudio({ videoId: '', audioUrl: '' })
+        }
+        return setAudio(newAudio)
       }
-      setAudio(newAudio)
     }
     if (appName?.length) {
       getData()
@@ -44,14 +50,6 @@ const useThemeMusic = (serverAPI: ServerAPI, appId: number) => {
       ignore = true
     }
   }, [appName])
-
-  useEffect(() => {
-    if (audio?.videoId) {
-      updateCache(appId, {
-        videoId: audio.videoId
-      })
-    }
-  }, [audio, appName])
 
   return {
     audio

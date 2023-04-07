@@ -7,6 +7,7 @@ import AboutPage from './aboutPage'
 import { SettingsProvider } from '../../context/settingsContext'
 import { getYouTubeSearchResults } from '../../actions/audio'
 import YouTubeVideo from '../../../types/YouTube'
+import GameSettings from './gameSettings'
 
 export default function ChangeTheme({ serverAPI }: { serverAPI: ServerAPI }) {
   const [currentTab, setCurrentTab] = useState<string>()
@@ -81,6 +82,15 @@ export default function ChangeTheme({ serverAPI }: { serverAPI: ServerAPI }) {
               </SettingsProvider>
             ),
             id: 'change-music-tab'
+          },
+          {
+            title: t('gameSettings'),
+            content: (
+              <SettingsProvider>
+                <GameSettings serverAPI={serverAPI} />
+              </SettingsProvider>
+            ),
+            id: 'game-settings-tab'
           },
           { title: t('about'), content: <AboutPage />, id: 'about-tab' }
         ]}

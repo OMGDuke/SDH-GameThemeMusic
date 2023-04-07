@@ -1,27 +1,15 @@
 import {
   ButtonItem,
   PanelSection,
-  PanelSectionProps,
   PanelSectionRow,
-  SliderField
+  SliderField,
+  ToggleField
 } from 'decky-frontend-lib'
-import React, { FC, ReactNode } from 'react'
+import React from 'react'
 import { useSettings } from '../../context/settingsContext'
 import useTranslations from '../../hooks/useTranslations'
-import { FaVolumeUp } from 'react-icons/fa'
+import { FaVolumeMute, FaVolumeUp } from 'react-icons/fa'
 import { clearCache } from '../../cache/musicCache'
-
-type ExtendedPanelSectionProps = PanelSectionProps & {
-  children: ReactNode
-}
-
-const DeckPanelSection = PanelSection as FC<ExtendedPanelSectionProps>
-
-type PanelSectionRowProps = {
-  children: ReactNode
-}
-
-const DeckPanelSectionRow = PanelSectionRow as FC<PanelSectionRowProps>
 
 export default function Index() {
   const { state: settingsState, dispatch: settingsDispatch } = useSettings()
@@ -29,27 +17,42 @@ export default function Index() {
 
   return (
     <div>
-      <DeckPanelSection title={t('settings')}>
-        <DeckPanelSectionRow>
+      <PanelSection title={t('settings')}>
+        <PanelSectionRow>
           <SliderField
             label={t('volume')}
             description={t('volumeDescription')}
-            value={settingsState.volume}
+            value={settingsState.volume * 100}
             onChange={(newVal: number) => {
               settingsDispatch({
                 type: 'set-volume',
-                value: newVal
+                value: newVal / 100
               })
             }}
             min={0}
-            max={1}
-            step={0.01}
+            max={100}
+            step={1}
             icon={<FaVolumeUp />}
+            editableValue
           />
-        </DeckPanelSectionRow>
-      </DeckPanelSection>
-      <DeckPanelSection title={t('overrides')}>
-        <DeckPanelSectionRow>
+        </PanelSectionRow>
+        <PanelSectionRow>
+          <ToggleField
+            icon={<FaVolumeMute />}
+            checked={settingsState.defaultMuted}
+            label={t('defaultMuted')}
+            description={t('defaultMutedDescription')}
+            onChange={(newVal: boolean) => {
+              settingsDispatch({
+                type: 'set-default-muted',
+                value: newVal
+              })
+            }}
+          />
+        </PanelSectionRow>
+      </PanelSection>
+      <PanelSection title={t('overrides')}>
+        <PanelSectionRow>
           <ButtonItem
             label={t('deleteOverridesLabel')}
             bottomSeparator="none"
@@ -58,8 +61,8 @@ export default function Index() {
           >
             {t('deleteOverrides')}
           </ButtonItem>
-        </DeckPanelSectionRow>
-      </DeckPanelSection>
+        </PanelSectionRow>
+      </PanelSection>
     </div>
   )
 }

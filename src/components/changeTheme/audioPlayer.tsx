@@ -3,6 +3,8 @@ import React, { useEffect, useRef, useState } from 'react'
 import useTranslations from '../../hooks/useTranslations'
 import { getAudioUrlFromVideoId } from '../../actions/audio'
 import YouTubeVideo from '../../../types/YouTube'
+import { FaCheck } from 'react-icons/fa'
+import Spinner from '../spinner'
 
 export default function AudioPlayer({
   handlePlay,
@@ -19,7 +21,7 @@ export default function AudioPlayer({
   selected: boolean
   selectNewAudio: (audio: {
     title: string
-    videoId: string | undefined
+    videoId: string
     audioUrl: string
   }) => void
 }) {
@@ -72,9 +74,7 @@ export default function AudioPlayer({
     <div>
       <Focusable
         style={{
-          background: selected
-            ? 'var(--main-light-blue-background)'
-            : 'var(--main-editor-bg-color)',
+          background: 'var(--main-editor-bg-color)',
           borderRadius: '6px',
           display: 'grid',
           gridTemplateRows: '129px max-content max-content',
@@ -95,9 +95,7 @@ export default function AudioPlayer({
         />
         <p
           style={{
-            color: selected
-              ? 'var(--main-editor-bg-color)'
-              : 'var(--main-editor-text-color)',
+            color: 'var(--main-editor-text-color)',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             width: '230px',
@@ -107,29 +105,65 @@ export default function AudioPlayer({
           {video.title}
         </p>
 
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '6px',
-            width: '230px'
-          }}
-        >
-          <DialogButton
-            onClick={togglePlay}
-            disabled={loading}
-            focusable={!loading}
+        {loading ? (
+          <div
+            style={{
+              height: '85px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
           >
-            {video.isPlaying ? t('stop') : t('play')}
-          </DialogButton>
-          <DialogButton
-            disabled={selected || loading}
-            focusable={!selected && !loading}
-            onClick={selectAudio}
+            <Spinner />
+          </div>
+        ) : (
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '6px',
+              width: '230px'
+            }}
           >
-            {selected ? t('selected') : t('select')}
-          </DialogButton>
-        </div>
+            <DialogButton
+              onClick={togglePlay}
+              disabled={loading}
+              focusable={!loading}
+            >
+              {video.isPlaying ? t('stop') : t('play')}
+            </DialogButton>
+            <div style={{ position: 'relative' }}>
+              <DialogButton
+                disabled={selected || loading}
+                focusable={!selected && !loading}
+                onClick={selectAudio}
+              >
+                {selected ? t('selected') : t('select')}
+              </DialogButton>
+              {selected ? (
+                <div
+                  style={{
+                    height: '20px',
+                    width: '20px',
+                    position: 'absolute',
+                    bottom: '-6px',
+                    right: '-6px',
+                    background: '#59bf40',
+                    borderRadius: '50%',
+                    color: 'white',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  <FaCheck />
+                </div>
+              ) : (
+                ''
+              )}
+            </div>
+          </div>
+        )}
       </Focusable>
       <audio
         ref={audioRef}
@@ -138,6 +172,7 @@ export default function AudioPlayer({
         controlsList="nodownload"
         onPlay={() => audioRef.current?.play()}
         onPause={() => audioRef.current?.pause()}
+        style={{ display: 'none' }}
       ></audio>
     </div>
   )
