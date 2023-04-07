@@ -8,7 +8,6 @@ import { useSettings } from '../context/settingsContext'
 
 const useThemeMusic = (serverAPI: ServerAPI, appId: number) => {
   const { state: settingsState } = useSettings()
-  console.log('defaultMuted', settingsState.defaultMuted)
   const [audio, setAudio] = useState<{ videoId: string; audioUrl: string }>({
     videoId: '',
     audioUrl: ''
