@@ -47,7 +47,7 @@ export default function ChangePage({
 
   function selectNewAudio(audio: {
     title: string
-    videoId: string | undefined
+    videoId: string
     audioUrl: string
   }) {
     setSelected(audio.videoId)
@@ -56,15 +56,18 @@ export default function ChangePage({
 
   return (
     <div>
-      <h2 style={{ margin: '0' }}>{appName}</h2>
-      <PanelSection title={t('search')}>
+      <h2 style={{ margin: '20px 0' }}>{appName}</h2>
+      <PanelSection>
         <PanelSectionRow>
           <Focusable
             style={{
               display: 'grid',
               gap: '6px',
               gridTemplateColumns: '2fr max-content max-content',
-              height: 'max-content'
+              height: 'max-content',
+              background: 'var(--main-editor-bg-color)',
+              borderRadius: '6px',
+              padding: '10px'
             }}
           >
             <form

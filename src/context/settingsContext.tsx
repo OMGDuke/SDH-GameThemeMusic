@@ -3,10 +3,12 @@ import * as React from 'react'
 const LOCAL_STORAGE_KEY = 'game-theme-music-settings'
 type State = {
   volume: number
+  defaultMuted: boolean
 }
 
 type Action =
   | { type: 'set-volume'; value: State['volume'] }
+  | { type: 'set-default-muted'; value: State['defaultMuted'] }
   | { type: 'load-settings'; value: State }
 type Dispatch = (action: Action) => void
 
@@ -17,7 +19,8 @@ const SettingsStateContext = React.createContext<
 >(undefined)
 
 const defaultSettings = {
-  volume: 1
+  volume: 1,
+  defaultMuted: false
 } as const
 
 function settingsReducer(state: State, action: Action) {
@@ -27,34 +30,31 @@ function settingsReducer(state: State, action: Action) {
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newState))
       return newState
     }
+    case 'set-default-muted': {
+      const newState = { ...state, defaultMuted: action.value }
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newState))
+      return newState
+    }
     case 'load-settings': {
       return action.value
     }
   }
 }
 
+function getInitialState() {
+  const settingsString = localStorage.getItem(LOCAL_STORAGE_KEY)
+  if (!settingsString) {
+    return defaultSettings
+  }
+  const storedSettings = JSON.parse(settingsString)
+  return {
+    volume: storedSettings?.volume || defaultSettings.volume,
+    defaultMuted: storedSettings?.defaultMuted || defaultSettings.defaultMuted
+  }
+}
+
 function SettingsProvider({ children }: SettingsProviderProps) {
-  const [state, dispatch] = React.useReducer(settingsReducer, defaultSettings)
-  React.useEffect(() => {
-    async function getSettings() {
-      const settingsString = localStorage.getItem(LOCAL_STORAGE_KEY)
-      if (!settingsString) {
-        dispatch({
-          type: 'load-settings',
-          value: defaultSettings
-        })
-        return
-      }
-      const storedSettings = JSON.parse(settingsString)
-      dispatch({
-        type: 'load-settings',
-        value: {
-          volume: storedSettings?.volume || defaultSettings.volume
-        }
-      })
-    }
-    getSettings()
-  }, [])
+  const [state, dispatch] = React.useReducer(settingsReducer, getInitialState())
   const value = { state, dispatch }
   return (
     <SettingsStateContext.Provider value={value}>

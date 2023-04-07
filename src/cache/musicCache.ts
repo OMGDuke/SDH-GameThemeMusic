@@ -7,11 +7,18 @@ localforage.config({
 })
 
 type GameThemeMusicCache = {
-  videoId: string | undefined
+  videoId?: string | undefined
+  volume?: number
 }
 
 export async function updateCache(appId: number, newData: GameThemeMusicCache) {
-  const newCache = await localforage.setItem(appId.toString(), newData)
+  const oldCache = (await localforage.getItem(
+    appId.toString()
+  )) as GameThemeMusicCache | null
+  const newCache = await localforage.setItem(appId.toString(), {
+    ...(oldCache || {}),
+    ...newData
+  })
   return newCache
 }
 

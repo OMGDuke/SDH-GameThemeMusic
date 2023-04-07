@@ -15,7 +15,7 @@ export default function ThemePlayer({
   const { audio } = useThemeMusic(serverAPI, parseInt(appid))
 
   useEffect(() => {
-    if (audio?.audioUrl && audioRef.current) {
+    if (audio?.audioUrl?.length && audioRef.current) {
       audioRef.current.src = audio?.audioUrl
       audioRef.current.volume = settingsState.volume
       audioRef.current.play()
