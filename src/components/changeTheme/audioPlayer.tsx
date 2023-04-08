@@ -1,10 +1,11 @@
 import { DialogButton, Focusable, ServerAPI } from 'decky-frontend-lib'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import useTranslations from '../../hooks/useTranslations'
 import { getAudioUrlFromVideoId } from '../../actions/audio'
 import YouTubeVideo from '../../../types/YouTube'
 import { FaCheck } from 'react-icons/fa'
 import Spinner from '../spinner'
+import useAudioPlayer from '../../hooks/useAudioPlayer'
 
 export default function AudioPlayer({
   handlePlay,
@@ -26,9 +27,10 @@ export default function AudioPlayer({
   }) => void
 }) {
   const t = useTranslations()
-  const audioRef = useRef<HTMLAudioElement>(null)
   const [loading, setLoading] = useState(true)
   const [audioUrl, setAudio] = useState<string | undefined>()
+
+  const audioPlayer = useAudioPlayer(audioUrl)
 
   useEffect(() => {
     async function getData() {
@@ -43,22 +45,19 @@ export default function AudioPlayer({
   }, [video.id])
 
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = volume
+    if (audioPlayer.isReady) {
+      audioPlayer.setVolume(volume)
     }
-  }, [audioRef])
+  }, [audioPlayer.isReady])
 
   useEffect(() => {
-    if (audioRef.current) {
-      video.isPlaying ? audioRef.current.play() : audioRef.current.pause()
+    if (audioPlayer.isReady) {
+      video.isPlaying ? audioPlayer.play() : audioPlayer.stop()
     }
   }, [video.isPlaying])
 
   function togglePlay() {
-    if (audioRef?.current) {
-      audioRef.current.currentTime = 0
-      handlePlay(!video.isPlaying)
-    }
+    handlePlay(!video.isPlaying)
   }
 
   function selectAudio() {
@@ -69,6 +68,7 @@ export default function AudioPlayer({
         audioUrl: audioUrl
       })
   }
+
   if (!loading && !audioUrl) return <></>
   return (
     <div>
@@ -165,15 +165,6 @@ export default function AudioPlayer({
           </div>
         )}
       </Focusable>
-      <audio
-        ref={audioRef}
-        src={audioUrl}
-        autoPlay={false}
-        controlsList="nodownload"
-        onPlay={() => audioRef.current?.play()}
-        onPause={() => audioRef.current?.pause()}
-        style={{ display: 'none' }}
-      ></audio>
     </div>
   )
 }
