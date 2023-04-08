@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 
 import { getAudio, getAudioUrlFromVideoId } from '../actions/audio'
 
-import { getCache } from '../cache/musicCache'
+import { getCache, updateCache } from '../cache/musicCache'
 import { useSettings } from '../context/settingsContext'
 
 const useThemeMusic = (serverAPI: ServerAPI, appId: number) => {
@@ -39,6 +39,7 @@ const useThemeMusic = (serverAPI: ServerAPI, appId: number) => {
         if (!newAudio?.audioUrl?.length) {
           return setAudio({ videoId: '', audioUrl: '' })
         }
+        await updateCache(appId, newAudio)
         return setAudio(newAudio)
       }
     }

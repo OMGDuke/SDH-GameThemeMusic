@@ -1,9 +1,10 @@
 import { ServerAPI, useParams } from 'decky-frontend-lib'
-import React, { ReactElement, useEffect, useRef, useState } from 'react'
+import React, { ReactElement, useEffect } from 'react'
 
 import useThemeMusic from '../../hooks/useThemeMusic'
 import { useSettings } from '../../context/settingsContext'
 import { getCache } from '../../cache/musicCache'
+import useAudioPlayer from '../../hooks/useAudioPlayer'
 
 export default function ThemePlayer({
   serverAPI
@@ -12,44 +13,26 @@ export default function ThemePlayer({
 }): ReactElement {
   const { state: settingsState } = useSettings()
   const { appid } = useParams<{ appid: string }>()
-  const audioRef = useRef<HTMLAudioElement>(null)
   const { audio } = useThemeMusic(serverAPI, parseInt(appid))
-  const [volume, setVolume] = useState(settingsState.volume)
+  const audioPlayer = useAudioPlayer(audio.audioUrl)
 
   useEffect(() => {
     async function getData() {
       const cache = await getCache(parseInt(appid))
       if (typeof cache?.volume === 'number' && isFinite(cache.volume)) {
-        setVolume(cache.volume)
+        audioPlayer.setVolume(cache.volume)
+      } else {
+        audioPlayer.setVolume(settingsState.volume)
       }
     }
     getData()
   }, [])
 
   useEffect(() => {
-    if (audio?.audioUrl?.length && audioRef.current) {
-      audioRef.current.src = audio?.audioUrl
-      audioRef.current.volume = volume
-      audioRef.current.play()
+    if (audio?.audioUrl?.length && audioPlayer.isReady) {
+      audioPlayer.play()
     }
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.pause()
-        audioRef.current.volume = 0
-        audioRef.current.src = ''
-      }
-    }
-  }, [audio?.audioUrl, audioRef?.current, volume])
+  }, [audio?.audioUrl, audioPlayer.isReady])
 
-  if (!audio?.audioUrl?.length) return <></>
-
-  return (
-    <audio
-      ref={audioRef}
-      className="game-theme-music-container"
-      style={{ display: 'none' }}
-      loop
-      controls={false}
-    ></audio>
-  )
+  return <></>
 }

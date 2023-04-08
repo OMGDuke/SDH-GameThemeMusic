@@ -6,7 +6,7 @@ import {
   PanelSectionRow,
   useParams
 } from 'decky-frontend-lib'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { getCache, updateCache } from '../../cache/musicCache'
 
 import { getAudioUrlFromVideoId, getAudio } from '../../actions/audio'
@@ -14,10 +14,10 @@ import useTranslations from '../../hooks/useTranslations'
 import { useSettings } from '../../context/settingsContext'
 import { FaVolumeUp } from 'react-icons/fa'
 import Spinner from '../spinner'
+import useAudioPlayer from '../../hooks/useAudioPlayer'
 
 export default function GameSettings({ serverAPI }: { serverAPI: ServerAPI }) {
   const t = useTranslations()
-  const audioRef = useRef<HTMLAudioElement>(null)
   const { state: settingsState } = useSettings()
   const { appid } = useParams<{ appid: string }>()
   const appDetails = appStore.GetAppOverviewByGameID(parseInt(appid))
@@ -25,14 +25,15 @@ export default function GameSettings({ serverAPI }: { serverAPI: ServerAPI }) {
 
   const [currentAudio, setCurrentAudio] = useState<string>()
   const [themeVolume, setThemeVolume] = useState(settingsState.volume)
-  const [isPlaying, setIsPlaying] = useState(false)
   const [loading, setLoading] = useState(true)
+
+  const audioPlayer = useAudioPlayer(currentAudio)
 
   useEffect(() => {
     async function getData() {
       setLoading(true)
       const cache = await getCache(parseInt(appid))
-      if (cache?.volume) {
+      if (typeof cache?.volume === 'number' && isFinite(cache.volume)) {
         setThemeVolume(cache.volume)
       }
       if (cache?.videoId?.length) {
@@ -51,23 +52,11 @@ export default function GameSettings({ serverAPI }: { serverAPI: ServerAPI }) {
     getData()
   }, [appid])
 
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = themeVolume
-    }
-  }, [audioRef, themeVolume])
-
-  function updateThemeVolume(newVol: number) {
+  function updateThemeVolume(newVol: number, reset?: boolean) {
     setThemeVolume(newVol)
-    updateCache(parseInt(appid), { volume: newVol })
+    audioPlayer.setVolume(newVol)
+    updateCache(parseInt(appid), { volume: reset ? undefined : newVol })
   }
-
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.currentTime = 0
-      isPlaying ? audioRef.current.play() : audioRef.current.pause()
-    }
-  }, [audioRef, isPlaying])
 
   return (
     <div>
@@ -103,28 +92,26 @@ export default function GameSettings({ serverAPI }: { serverAPI: ServerAPI }) {
           </PanelSectionRow>
         </div>
         <DialogButton
-          onClick={() => setIsPlaying((v) => !v)}
+          onClick={audioPlayer.togglePlay}
           disabled={loading}
           focusable={!loading}
           style={{ height: 'max-content' }}
         >
-          {loading ? <Spinner /> : isPlaying ? t('stop') : t('play')}
+          {loading ? (
+            <Spinner />
+          ) : audioPlayer.isPlaying ? (
+            t('stop')
+          ) : (
+            t('play')
+          )}
         </DialogButton>
         <DialogButton
-          onClick={() => updateThemeVolume(settingsState.volume)}
+          onClick={() => updateThemeVolume(settingsState.volume, true)}
           style={{ height: 'max-content' }}
         >
           {t('resetVolume')}
         </DialogButton>
       </Focusable>
-
-      <audio
-        ref={audioRef}
-        src={currentAudio}
-        controlsList="nodownload"
-        loop
-        style={{ display: 'none' }}
-      ></audio>
     </div>
   )
 }
