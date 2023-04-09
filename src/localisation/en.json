@@ -22,5 +22,7 @@
     "supportDescription": "Visit the Steam Deck Homebrew Discord deckbrew.xyz/discord",
     "supportLabel": "Support",
     "volume": "Music Volume",
-    "volumeDescription": "Adjust music volume"
+    "volumeDescription": "Adjust music volume",
+    "invidiousInstance": "Invidious Instance",
+    "invidiousInstanceDescription": "Which Invidious instance would you like to use for searching and getting audio?"
 }

@@ -34,7 +34,7 @@ export default definePlugin((serverAPI: ServerAPI) => {
     icon: <GiMusicalNotes />,
     content: (
       <SettingsProvider>
-        <Settings />
+        <Settings serverAPI={serverAPI} />
       </SettingsProvider>
     ),
     onDismount() {
