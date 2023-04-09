@@ -31,7 +31,7 @@ export async function getYouTubeSearchResults(
   customSearch?: boolean
 ): Promise<YouTubeVideo[] | undefined> {
   const searchTerm = `${encodeURIComponent(appName)}${
-    customSearch ? '' : '%20Theme%20Music'
+    customSearch ? '' : '%20Game%20Theme%20Music'
   }`
   const req = {
     method: 'GET',
