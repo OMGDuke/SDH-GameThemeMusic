@@ -33,7 +33,7 @@ export default function ChangePage({
   const { state: settingsState } = useSettings()
   const { appid } = useParams<{ appid: string }>()
   const appDetails = appStore.GetAppOverviewByGameID(parseInt(appid))
-  const appName = appDetails?.display_name
+  const appName = appDetails?.display_name?.replace(/(™|®|©)/g, '')
   const [selected, setSelected] = useState<string | undefined>()
   const [searchTerm, setSearchTerm] = useState(appName || '')
 
