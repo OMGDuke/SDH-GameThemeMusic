@@ -1,7 +1,7 @@
 {
-    "about": "About",
-    "aboutDescription": "Play theme songs on your game pages",
-    "aboutLabel": "About Game Theme Music",
+    "about": "О программе",
+    "aboutDescription": "Воспроизводит заглавные темы на страницах ваших игр",
+    "aboutLabel": "Информация о Game Theme Music",
     "changeThemeMusic": "Change Theme Music",
     "clear": "Clear",
     "defaultMuted": "Default Muted",
