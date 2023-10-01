@@ -1,16 +1,12 @@
 import React from 'react'
-import {
-    definePlugin,
-    Patch,
-    ServerAPI,
-    staticClasses
-} from 'decky-frontend-lib'
+import { definePlugin, ServerAPI, staticClasses } from 'decky-frontend-lib'
+
 import { GiMusicalNotes } from 'react-icons/gi'
 
 import Settings from './components/settings'
 import { SettingsProvider } from './context/settingsContext'
 import patchLibraryApp from './lib/patchLibraryApp'
-import patchContextMenu, { getMenu } from './lib/patchContextMenu'
+import patchContextMenu, { LibraryContextMenu } from './lib/patchContextMenu'
 import ChangeTheme from './components/changeTheme'
 import { AudioLoaderCompatState, AudioLoaderCompatStateContextProvider } from './state/AudioLoaderCompatState'
 
@@ -29,10 +25,7 @@ export default definePlugin((serverAPI: ServerAPI) => {
     }
   )
 
-  let patchedMenu: Patch | undefined
-  getMenu().then((LibraryContextMenu) => {
-    patchedMenu = patchContextMenu(LibraryContextMenu)
-  })
+  const patchedMenu = patchContextMenu(LibraryContextMenu)
 
 
   const AppStateRegistrar =
