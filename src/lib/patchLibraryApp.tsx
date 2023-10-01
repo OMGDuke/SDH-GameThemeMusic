@@ -1,16 +1,22 @@
 import {
-    afterPatch,
-    ServerAPI,
-    wrapReactType,
-    findInReactTree,
-    appDetailsClasses,
+  afterPatch,
+  ServerAPI,
+  wrapReactType,
+  findInReactTree,
+  appDetailsClasses
 } from 'decky-frontend-lib'
 import React, { ReactElement } from 'react'
 import ThemePlayer from '../components/themePlayer'
 import { SettingsProvider } from '../context/settingsContext'
-import { AudioLoaderCompatState, AudioLoaderCompatStateContextProvider } from '../state/AudioLoaderCompatState'
+import {
+  AudioLoaderCompatState,
+  AudioLoaderCompatStateContextProvider
+} from '../state/AudioLoaderCompatState'
 
-function patchLibraryApp(serverAPI: ServerAPI, AudioLoaderCompatState: AudioLoaderCompatState) {
+function patchLibraryApp(
+  serverAPI: ServerAPI,
+  AudioLoaderCompatState: AudioLoaderCompatState
+) {
   return serverAPI.routerHook.addPatch(
     '/library/app/:appid',
     (props?: { path?: string; children?: ReactElement }) => {
@@ -44,7 +50,9 @@ function patchLibraryApp(serverAPI: ServerAPI, AudioLoaderCompatState: AudioLoad
               }
 
               container.props.children.push(
-                <AudioLoaderCompatStateContextProvider AudioLoaderCompatStateClass={AudioLoaderCompatState}>
+                <AudioLoaderCompatStateContextProvider
+                  AudioLoaderCompatStateClass={AudioLoaderCompatState}
+                >
                   <SettingsProvider>
                     <ThemePlayer serverAPI={serverAPI} />
                   </SettingsProvider>
