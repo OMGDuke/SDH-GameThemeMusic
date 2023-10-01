@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react';
+import { useAudioLoaderCompatState } from '../state/AudioLoaderCompatState';
 
 const useAudioPlayer = (
   audioUrl: string | undefined
@@ -11,12 +12,18 @@ const useAudioPlayer = (
   isPlaying: boolean
   isReady: boolean
 } => {
+  const { setOnThemePage, onAppPage } = useAudioLoaderCompatState();
+  if(!onAppPage) {
+    setOnThemePage(true);
+  }
+  
   const audioPlayer: HTMLAudioElement = useMemo(() => {
     return new Audio()
   }, [])
 
   audioPlayer.oncanplay = () => {
     setIsReady(true)
+    setOnThemePage(true);
   }
 
   const [isPlaying, setIsPlaying] = useState(false)
@@ -38,6 +45,7 @@ const useAudioPlayer = (
   function play() {
     audioPlayer.play()
     setIsPlaying(true)
+    setOnThemePage(true);
   }
 
   function pause() {
@@ -64,6 +72,7 @@ const useAudioPlayer = (
     audioPlayer.src = ''
     setIsPlaying(false)
     setIsReady(false)
+    setOnThemePage(false);
   }
 
   return {
