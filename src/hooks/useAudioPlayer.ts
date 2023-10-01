@@ -30,10 +30,29 @@ const useAudioPlayer = (
   }, [audioUrl])
 
   useEffect(() => {
-    return () => {
-      unload()
-    }
+    return fadeOutAudio
   }, [])
+
+  function fadeOutAudio(): void {
+    const fadeOutInterval = 50
+    const fadeOutTime = 1000
+    const volumeStep = audioPlayer.volume / (fadeOutTime / fadeOutInterval)
+    let currentVolume = audioPlayer.volume
+
+    setTimeout(() => {
+      const fadeOutIntervalId = setInterval(() => {
+        currentVolume -= volumeStep
+        if (currentVolume <= 0) {
+          currentVolume = 0
+          clearInterval(fadeOutIntervalId)
+          audioPlayer.volume = currentVolume
+          unload()
+        } else {
+          audioPlayer.volume = currentVolume
+        }
+      }, fadeOutInterval)
+    }, 0)
+  }
 
   function play() {
     audioPlayer.play()

@@ -4,11 +4,13 @@ const LOCAL_STORAGE_KEY = 'game-theme-music-settings'
 type State = {
   volume: number
   defaultMuted: boolean
+  fadeOut: number
 }
 
 type Action =
   | { type: 'set-volume'; value: State['volume'] }
   | { type: 'set-default-muted'; value: State['defaultMuted'] }
+  | { type: 'set-fade-out'; value: State['fadeOut'] }
   | { type: 'load-settings'; value: State }
 type Dispatch = (action: Action) => void
 
@@ -20,7 +22,8 @@ const SettingsStateContext = React.createContext<
 
 const defaultSettings = {
   volume: 1,
-  defaultMuted: false
+  defaultMuted: false,
+  fadeOut: 0
 } as const
 
 function settingsReducer(state: State, action: Action) {
@@ -32,6 +35,11 @@ function settingsReducer(state: State, action: Action) {
     }
     case 'set-default-muted': {
       const newState = { ...state, defaultMuted: action.value }
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newState))
+      return newState
+    }
+    case 'set-fade-out': {
+      const newState = { ...state, fadeOut: action.value }
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newState))
       return newState
     }
@@ -49,7 +57,8 @@ function getInitialState() {
   const storedSettings = JSON.parse(settingsString)
   return {
     volume: storedSettings?.volume || defaultSettings.volume,
-    defaultMuted: storedSettings?.defaultMuted || defaultSettings.defaultMuted
+    defaultMuted: storedSettings?.defaultMuted || defaultSettings.defaultMuted,
+    fadeOut: storedSettings?.fadeOut || defaultSettings.fadeOut
   }
 }
 
