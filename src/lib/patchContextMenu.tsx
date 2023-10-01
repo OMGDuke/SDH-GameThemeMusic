@@ -15,6 +15,7 @@ function ChangeMusicButton({ appId }: { appId: number }) {
   const t = useTranslations()
   return (
     <MenuItem
+      key="game-theme-music-change-music"
       onSelected={() => {
         Navigation.Navigate(`/gamethememusic/${appId}`)
       }}
@@ -63,7 +64,7 @@ const contextMenuPatch = (LibraryContextMenu: any) => {
           'shouldComponentUpdate',
           ([nextProps]: any, shouldUpdate: any) => {
             const sgdbIdx = nextProps.children.findIndex(
-              (x: any) => x?.key === 'sgdb-change-artwork'
+              (x: any) => x?.key === 'game-theme-music-change-music'
             )
             if (sgdbIdx != -1) nextProps.children.splice(sgdbIdx, 1)
 
