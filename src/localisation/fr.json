@@ -2,12 +2,12 @@
     "about": "À propos",
     "aboutDescription": "Jouez le thème musical de vos jeux sur leur page de présentation",
     "aboutLabel": "À propos de l'extension Game Theme Music",
-    "changeThemeMusic": "Changer le générique",
+    "changeThemeMusic": "Changer le thème musical",
     "clear": "Effacer",
-    "defaultMuted": "Muter par défaut",
+    "defaultMuted": "Muet par défaut",
     "defaultMutedDescription": "Ne jouez la musique que si elle est définie manuellement",
-    "deleteOverrides": "Supprimer les dérogations",
-    "deleteOverridesLabel": "Supprime toutes les dérogations",
+    "deleteOverrides": "Supprimer les remplacements",
+    "deleteOverridesLabel": "Supprimer tous les remplacements",
     "gameSettings": "Paramètres du jeu",
     "gameVolumeDescription": "Ajuste le volume de la musique pour ce jeu",
     "noMusicLabel": "Aucune musique",
@@ -22,5 +22,5 @@
     "supportDescription": "Visitez le serveur Discord \"Steam Deck Homebrew\" deckbrew.xyz/discord",
     "supportLabel": "Assistance",
     "volume": "Volume de la musique",
-    "volumeDescription": "Ajuste le volume de la musique"
+    "volumeDescription": "Ajuster le volume de la musique"
 }
