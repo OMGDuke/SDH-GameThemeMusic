@@ -20,6 +20,21 @@ This plugin requires [Decky Loader](https://github.com/SteamDeckHomebrew/decky-l
 ## Steam Deck Homebrew Discord
 [![Chat](https://img.shields.io/badge/chat-on%20discord-7289da.svg)](https://deckbrew.xyz/discord)
 
+## Press and Media
+[Game Rant](https://gamerant.com/steam-deck-how-install-decky-loader-guide/)
+
+[Steam Deck Life](https://steamdecklife.com/2023/04/08/game-theme-music-steam-deck-plugin/)
+
+[The Gamer](https://www.thegamer.com/steam-deck-plugins-best-how-to-install/#shotty)
+
+[Tonchikiroku](https://tonchikiroku.com/steamdeck-game-theme-music-how-to/)
+
+[Yahoo News](https://sg.news.yahoo.com/install-decky-loader-steam-deck-123000375.html?_guc_consent_skip=1704405352)
+
+[Gardiner Bryant](https://youtu.be/uLpQbaRB9hc?t=447)
+
+[Midas Gamespace](https://youtu.be/Rc9DIhqxLnM?t=300)
+
 ## Other Plugins
 
 Check out my other plugin [ProtonDB Badges ❤️](https://github.com/OMGDuke/protondb-decky)
