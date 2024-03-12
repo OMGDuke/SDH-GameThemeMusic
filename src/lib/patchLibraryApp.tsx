@@ -8,8 +8,15 @@ import {
 import React, { ReactElement } from 'react'
 import ThemePlayer from '../components/themePlayer'
 import { SettingsProvider } from '../context/settingsContext'
+import {
+  AudioLoaderCompatState,
+  AudioLoaderCompatStateContextProvider
+} from '../state/AudioLoaderCompatState'
 
-function patchLibraryApp(serverAPI: ServerAPI) {
+function patchLibraryApp(
+  serverAPI: ServerAPI,
+  AudioLoaderCompatState: AudioLoaderCompatState
+) {
   return serverAPI.routerHook.addPatch(
     '/library/app/:appid',
     (props?: { path?: string; children?: ReactElement }) => {
@@ -43,9 +50,13 @@ function patchLibraryApp(serverAPI: ServerAPI) {
               }
 
               container.props.children.push(
-                <SettingsProvider>
-                  <ThemePlayer serverAPI={serverAPI} />
-                </SettingsProvider>
+                <AudioLoaderCompatStateContextProvider
+                  AudioLoaderCompatStateClass={AudioLoaderCompatState}
+                >
+                  <SettingsProvider>
+                    <ThemePlayer serverAPI={serverAPI} />
+                  </SettingsProvider>
+                </AudioLoaderCompatStateContextProvider>
               )
 
               return ret2

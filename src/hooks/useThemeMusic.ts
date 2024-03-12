@@ -13,7 +13,7 @@ const useThemeMusic = (serverAPI: ServerAPI, appId: number) => {
     audioUrl: ''
   })
   const appDetails = appStore.GetAppOverviewByGameID(appId)
-  const appName = appDetails?.display_name
+  const appName = appDetails?.display_name?.replace(/(™|®|©)/g, '')
 
   useEffect(() => {
     let ignore = false
