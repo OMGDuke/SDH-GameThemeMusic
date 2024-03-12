@@ -4,13 +4,11 @@ const LOCAL_STORAGE_KEY = 'game-theme-music-settings'
 type State = {
   volume: number
   defaultMuted: boolean
-  invidiousInstance: string
 }
 
 type Action =
   | { type: 'set-volume'; value: State['volume'] }
   | { type: 'set-default-muted'; value: State['defaultMuted'] }
-  | { type: 'set-invidious-instance'; value: State['invidiousInstance'] }
   | { type: 'load-settings'; value: State }
 type Dispatch = (action: Action) => void
 
@@ -22,8 +20,7 @@ const SettingsStateContext = React.createContext<
 
 const defaultSettings = {
   volume: 1,
-  defaultMuted: false,
-  invidiousInstance: 'https://vid.puffyan.us'
+  defaultMuted: false
 } as const
 
 function settingsReducer(state: State, action: Action) {
@@ -35,11 +32,6 @@ function settingsReducer(state: State, action: Action) {
     }
     case 'set-default-muted': {
       const newState = { ...state, defaultMuted: action.value }
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newState))
-      return newState
-    }
-    case 'set-invidious-instance': {
-      const newState = { ...state, invidiousInstance: action.value }
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newState))
       return newState
     }
@@ -57,9 +49,7 @@ export function getInitialState() {
   const storedSettings = JSON.parse(settingsString)
   return {
     volume: storedSettings?.volume || defaultSettings.volume,
-    defaultMuted: storedSettings?.defaultMuted || defaultSettings.defaultMuted,
-    invidiousInstance:
-      storedSettings?.invidiousInstance || defaultSettings.invidiousInstance
+    defaultMuted: storedSettings?.defaultMuted || defaultSettings.defaultMuted
   }
 }
 

@@ -7,7 +7,8 @@ import {
   findInReactTree,
   findModuleChild,
   MenuItem,
-  Navigation
+  Navigation,
+  Patch
 } from 'decky-frontend-lib'
 import useTranslations from '../hooks/useTranslations'
 
@@ -25,6 +26,7 @@ function ChangeMusicButton({ appId }: { appId: number }) {
   )
 }
 
+// Always add before "Properties..."
 const spliceChangeMusic = (children: any[], appid: number) => {
   children.find((x: any) => x?.key === 'properties')
   const propertiesMenuItemIdx = children.findIndex((item) =>
@@ -39,7 +41,6 @@ const spliceChangeMusic = (children: any[], appid: number) => {
     <ChangeMusicButton key="game-theme-music-change-music" appId={appid} />
   )
 }
-const renderedMap: { [appId: string]: true } = {}
 
 /**
  * Patches the game context menu.
@@ -47,24 +48,28 @@ const renderedMap: { [appId: string]: true } = {}
  * @returns A patch to remove when the plugin dismounts.
  */
 const contextMenuPatch = (LibraryContextMenu: any) => {
-  return afterPatch(
+  const patches: {
+    outer?: Patch
+    inner?: Patch
+    unpatch: () => void
+  } = {
+    unpatch: () => {
+      return null
+    }
+  }
+  patches.outer = afterPatch(
     LibraryContextMenu.prototype,
     'render',
     (_: Record<string, unknown>[], component: any) => {
       const appid: number = component._owner.pendingProps.overview.appid
 
-      if (
-        !Object.keys(renderedMap).includes(appid.toString()) &&
-        !window.location.pathname.endsWith('/routes/library/home')
-      ) {
-        renderedMap[appid.toString()] = true
-
-        afterPatch(
+      if (!patches.inner) {
+        patches.inner = afterPatch(
           component.type.prototype,
           'shouldComponentUpdate',
           ([nextProps]: any, shouldUpdate: any) => {
             const sgdbIdx = nextProps.children.findIndex(
-              (x: any) => x?.key === 'game-theme-music-change-music'
+              (x: any) => x?.key === 'sgdb-change-artwork'
             )
             if (sgdbIdx != -1) nextProps.children.splice(sgdbIdx, 1)
 
@@ -84,8 +89,7 @@ const contextMenuPatch = (LibraryContextMenu: any) => {
             }
 
             return shouldUpdate
-          },
-          { singleShot: true }
+          }
         )
       } else {
         spliceChangeMusic(component.props.children, appid)
@@ -94,6 +98,11 @@ const contextMenuPatch = (LibraryContextMenu: any) => {
       return component
     }
   )
+  patches.unpatch = () => {
+    patches.outer?.unpatch()
+    patches.inner?.unpatch()
+  }
+  return patches
 }
 
 /**

@@ -18,7 +18,9 @@ const useAudioPlayer = (
   }
 
   const audioPlayer: HTMLAudioElement = useMemo(() => {
-    return new Audio()
+    const audio = new Audio()
+    audio.preload = 'auto'
+    return audio
   }, [])
 
   audioPlayer.oncanplay = () => {
@@ -43,20 +45,26 @@ const useAudioPlayer = (
   }, [])
 
   function play() {
-    audioPlayer.play()
-    setIsPlaying(true)
-    setOnThemePage(true)
+    if (audioPlayer.readyState === HTMLMediaElement.HAVE_ENOUGH_DATA) {
+      audioPlayer.play()
+      setIsPlaying(true)
+      setOnThemePage(true)
+    }
   }
 
   function pause() {
-    audioPlayer.pause()
-    setIsPlaying(false)
+    if (!audioPlayer.paused && !audioPlayer.ended) {
+      audioPlayer.pause()
+      setIsPlaying(false)
+    }
   }
 
   function stop() {
-    audioPlayer.pause()
-    audioPlayer.currentTime = 0
-    setIsPlaying(false)
+    if (!audioPlayer.paused || audioPlayer.currentTime > 0) {
+      audioPlayer.pause()
+      audioPlayer.currentTime = 0
+      setIsPlaying(false)
+    }
   }
 
   function togglePlay() {

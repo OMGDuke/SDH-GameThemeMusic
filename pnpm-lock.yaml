@@ -5,9 +5,6 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
-  decky-frontend-lib:
-    specifier: ^3.22.0
-    version: 3.22.0
   localforage:
     specifier: ^1.10.0
     version: 1.10.0
@@ -43,6 +40,9 @@ devDependencies:
   '@typescript-eslint/parser':
     specifier: ^6.7.3
     version: 6.7.3(eslint@8.50.0)(typescript@5.2.2)
+  decky-frontend-lib:
+    specifier: ^3.25.0
+    version: 3.25.0
   eslint:
     specifier: ^8.50.0
     version: 8.50.0
@@ -813,9 +813,9 @@ packages:
       ms: 2.1.2
     dev: true
 
-  /decky-frontend-lib@3.22.0:
-    resolution: {integrity: sha512-MJ0y0bhNMHJyMVxHht3O0L0GxdT9sckUmh35HG7/ERqyZQsfKpDqOeW6pC1R07SnuWwgbl4fY3tzjlrb7qUeoA==}
-    dev: false
+  /decky-frontend-lib@3.25.0:
+    resolution: {integrity: sha512-2lBoHS2AIRmuluq/bGdHBz+uyToQE7k3K/vDq1MQbDZ4eC+8CGDuh2T8yZOj3D0yjGP2MdikNNAWPA9Z5l2qDg==}
+    dev: true
 
   /deep-is@0.1.4:
     resolution: {integrity: sha512-oIPzksmTg4/MriiaYGO+okXDT7ztn/w3Eptv/+gSIdMdKsJo0u4CfYNFJPy+4SKMuCqGw2wxnA+URMg3t8a/bQ==}
