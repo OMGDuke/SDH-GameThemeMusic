@@ -1,8 +1,8 @@
 {
     "about": "Про додаток",
     "aboutDescription": "Відтворення головних тем на сторінках ваших ігор",
-    "aboutLabel": "Інформація про Game Theme Music",
-    "changeThemeMusic": "Змінити композицію",
+    "aboutLabel": "Інформація про тематичну музику у грі",
+    "changeThemeMusic": "Змінити музичну тему",
     "clear": "Очистити",
     "defaultMuted": "За замовчуванням беззвучно",
     "defaultMutedDescription": "Не відтворювати музику, якщо не вибрана композиція вручну",
