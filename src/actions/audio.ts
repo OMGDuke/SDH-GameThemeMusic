@@ -1,11 +1,22 @@
 import { ServerAPI } from 'decky-frontend-lib'
 import YouTubeVideo from '../../types/YouTube'
+import { Settings, defaultSettings } from '../hooks/useSettings'
 
 type YouTubeInitialData = {
   title: string
   url: string
   thumbnail: string
 }[]
+
+async function getEndpoint(serverApi: ServerAPI) {
+  const savedSettings = (
+    await serverApi.callPluginMethod('get_setting', {
+      key: 'settings',
+      default: defaultSettings
+    })
+  ).result as Settings
+  return savedSettings.pipedInstance
+}
 
 export async function getYouTubeSearchResults(
   serverAPI: ServerAPI,
@@ -16,9 +27,10 @@ export async function getYouTubeSearchResults(
     const searchTerm = `${encodeURIComponent(appName)}${
       customSearch ? '' : '%20Theme%20Music'
     }`
+    const endpoint = await getEndpoint(serverAPI)
     const req = {
       method: 'GET',
-      url: `https://pipedapi.r4fo.com/search?q=${searchTerm}&filter=all`,
+      url: `${endpoint}/search?q=${searchTerm}&filter=all`,
       timeout: 8000
     }
     const res = await serverAPI.callServerMethod<
@@ -56,9 +68,10 @@ export async function getAudioUrlFromVideoId(
   video: { title: string; id: string }
 ): Promise<string | undefined> {
   try {
+    const endpoint = await getEndpoint(serverAPI)
     const req = {
       method: 'GET',
-      url: `https://pipedapi.r4fo.com/streams/${encodeURIComponent(video.id)}`
+      url: `${endpoint}/streams/${encodeURIComponent(video.id)}`
     }
     const res = await serverAPI.callServerMethod<
       { method: string; url: string },

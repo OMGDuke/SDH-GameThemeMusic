@@ -8,12 +8,14 @@ export type Settings = {
   volume: number
 }
 
+export const defaultSettings = {
+  defaultMuted: false,
+  pipedInstance: 'https://pipedapi.kavin.rocks',
+  volume: 1
+}
+
 export const useSettings = (serverApi: ServerAPI) => {
-  const [settings, setSettings] = useState<Settings>({
-    defaultMuted: false,
-    pipedInstance: 'https://pipedapi.kavin.rocks',
-    volume: 1
-  })
+  const [settings, setSettings] = useState<Settings>(defaultSettings)
 
   const [isLoading, setIsLoading] = useState(true)
 
