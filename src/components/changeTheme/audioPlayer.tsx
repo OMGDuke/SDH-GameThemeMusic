@@ -48,7 +48,7 @@ export default function AudioPlayer({
     if (audioPlayer.isReady) {
       audioPlayer.setVolume(volume)
     }
-  }, [audioPlayer.isReady])
+  }, [audioPlayer.isReady, volume])
 
   useEffect(() => {
     if (audioPlayer.isReady) {

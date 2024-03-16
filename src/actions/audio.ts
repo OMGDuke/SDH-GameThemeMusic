@@ -104,3 +104,46 @@ export async function getAudio(
   }
   return undefined
 }
+
+export async function getPipedInstances(
+  serverAPI: ServerAPI
+): Promise<{ name: string; url: string }[]> {
+  const req = {
+    method: 'GET',
+    url: 'https://piped-instances.kavin.rocks/'
+  }
+  const res = await serverAPI.callServerMethod<
+    { method: string; url: string },
+    { body: string; status: number }
+  >('http_request', req)
+  if (res.success && res.result.status === 200) {
+    const instances: {
+      api_url: string
+      cache: boolean
+      cdn: boolean
+      image_proxy_url: string
+      last_checked: number
+      locations: string
+      name: string
+      registered: number
+      registration_disabled: boolean
+      s3_enabled: boolean
+      up_to_date: boolean
+      uptime_24h: number
+      uptime_7d: number
+      uptime_30d: number
+      version: string
+    }[] = JSON.parse(res.result?.body)
+
+    if (instances?.length) {
+      return instances.map((ins) => ({
+        name: `${ins.locations} ${ins.name || ins.api_url} ${
+          ins.uptime_30d ? `| Uptime (30d): ${Math.floor(ins.uptime_30d)}%` : ''
+        }`,
+        url: ins.api_url
+      }))
+    }
+    return []
+  }
+  return []
+}

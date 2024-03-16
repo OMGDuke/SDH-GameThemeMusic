@@ -2,7 +2,7 @@ import { ServerAPI, useParams } from 'decky-frontend-lib'
 import React, { ReactElement, useEffect } from 'react'
 
 import useThemeMusic from '../../hooks/useThemeMusic'
-import { useSettings } from '../../context/settingsContext'
+import { useSettings } from '../../hooks/useSettings'
 import { getCache } from '../../cache/musicCache'
 import useAudioPlayer from '../../hooks/useAudioPlayer'
 
@@ -11,7 +11,7 @@ export default function ThemePlayer({
 }: {
   serverAPI: ServerAPI
 }): ReactElement {
-  const { state: settingsState } = useSettings()
+  const { settings, isLoading: settingsIsLoading } = useSettings(serverAPI)
   const { appid } = useParams<{ appid: string }>()
   const { audio } = useThemeMusic(serverAPI, parseInt(appid))
   const audioPlayer = useAudioPlayer(audio.audioUrl)
@@ -22,11 +22,13 @@ export default function ThemePlayer({
       if (typeof cache?.volume === 'number' && isFinite(cache.volume)) {
         audioPlayer.setVolume(cache.volume)
       } else {
-        audioPlayer.setVolume(settingsState.volume)
+        audioPlayer.setVolume(settings.volume)
       }
     }
-    getData()
-  }, [])
+    if (!settingsIsLoading) {
+      getData()
+    }
+  }, [settingsIsLoading])
 
   useEffect(() => {
     if (audio?.audioUrl?.length && audioPlayer.isReady) {

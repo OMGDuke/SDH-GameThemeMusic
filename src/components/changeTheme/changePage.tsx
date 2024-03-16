@@ -9,7 +9,7 @@ import {
   useParams
 } from 'decky-frontend-lib'
 import React, { useEffect, useState } from 'react'
-import { useSettings } from '../../context/settingsContext'
+import { useSettings } from '../../hooks/useSettings'
 import AudioPlayer from './audioPlayer'
 import { getCache, updateCache } from '../../cache/musicCache'
 import useTranslations from '../../hooks/useTranslations'
@@ -30,7 +30,7 @@ export default function ChangePage({
   customSearch: (term: string | undefined) => void
 }) {
   const t = useTranslations()
-  const { state: settingsState } = useSettings()
+  const { settings } = useSettings(serverAPI)
   const { appid } = useParams<{ appid: string }>()
   const appDetails = appStore.GetAppOverviewByGameID(parseInt(appid))
   const appName = appDetails?.display_name?.replace(/(™|®|©)/g, '')
@@ -124,7 +124,7 @@ export default function ChangePage({
                 key={video.id}
                 serverAPI={serverAPI}
                 video={video}
-                volume={settingsState.volume}
+                volume={settings.volume}
                 handlePlay={(status) => {
                   handlePlay(index, status)
                 }}

@@ -1,19 +1,49 @@
 import {
   ButtonItem,
+  DropdownItem,
   PanelSection,
   PanelSectionRow,
+  ServerAPI,
+  SingleDropdownOption,
   SliderField,
   ToggleField
 } from 'decky-frontend-lib'
-import React from 'react'
-import { useSettings } from '../../context/settingsContext'
+import React, { useMemo } from 'react'
+import { useSettings } from '../../hooks/useSettings'
 import useTranslations from '../../hooks/useTranslations'
 import { FaVolumeMute, FaVolumeUp } from 'react-icons/fa'
 import { clearCache } from '../../cache/musicCache'
+import usePipedInstances from '../../hooks/usePipedInstances'
 
-export default function Index() {
-  const { state: settingsState, dispatch: settingsDispatch } = useSettings()
+type Props = {
+  serverAPI: ServerAPI
+}
+
+export default function Index({ serverAPI }: Props) {
+  const { settings, setDefaultMuted, setPipedInstance, setVolume } =
+    useSettings(serverAPI)
+
   const t = useTranslations()
+
+  const { instances, instancesLoading } = usePipedInstances(serverAPI)
+
+  const instanceOptions = useMemo<SingleDropdownOption[]>(
+    () =>
+      instances.map((ins) => ({
+        data: ins.url,
+        label: ins.name
+      })),
+    [instances]
+  )
+
+  async function changeInstance(option: SingleDropdownOption) {
+    console.log(option.data)
+    try {
+      setPipedInstance(option.data)
+    } catch (err) {
+      console.log({ err })
+    }
+  }
 
   return (
     <div>
@@ -22,12 +52,9 @@ export default function Index() {
           <SliderField
             label={t('volume')}
             description={t('volumeDescription')}
-            value={settingsState.volume * 100}
+            value={settings.volume * 100}
             onChange={(newVal: number) => {
-              settingsDispatch({
-                type: 'set-volume',
-                value: newVal / 100
-              })
+              setVolume(newVal / 100)
             }}
             min={0}
             max={100}
@@ -39,18 +66,28 @@ export default function Index() {
         <PanelSectionRow>
           <ToggleField
             icon={<FaVolumeMute />}
-            checked={settingsState.defaultMuted}
+            checked={settings.defaultMuted}
             label={t('defaultMuted')}
             description={t('defaultMutedDescription')}
             onChange={(newVal: boolean) => {
-              settingsDispatch({
-                type: 'set-default-muted',
-                value: newVal
-              })
+              setDefaultMuted(newVal)
             }}
           />
         </PanelSectionRow>
       </PanelSection>
+      <PanelSectionRow>
+        <DropdownItem
+          disabled={instancesLoading || !instanceOptions?.length}
+          label={t('pipedInstance')}
+          description={t('pipedInstanceDescription')}
+          menuLabel={t('pipedInstance')}
+          rgOptions={instanceOptions}
+          selectedOption={
+            instanceOptions.find((o) => o.data === settings.pipedInstance)?.data
+          }
+          onChange={(newVal) => changeInstance(newVal)}
+        />
+      </PanelSectionRow>
       <PanelSection title={t('overrides')}>
         <PanelSectionRow>
           <ButtonItem

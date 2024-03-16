@@ -7,7 +7,6 @@ import {
 } from 'decky-frontend-lib'
 import React, { ReactElement } from 'react'
 import ThemePlayer from '../components/themePlayer'
-import { SettingsProvider } from '../context/settingsContext'
 import {
   AudioLoaderCompatState,
   AudioLoaderCompatStateContextProvider
@@ -53,9 +52,7 @@ function patchLibraryApp(
                 <AudioLoaderCompatStateContextProvider
                   AudioLoaderCompatStateClass={AudioLoaderCompatState}
                 >
-                  <SettingsProvider>
-                    <ThemePlayer serverAPI={serverAPI} />
-                  </SettingsProvider>
+                  <ThemePlayer serverAPI={serverAPI} />
                 </AudioLoaderCompatStateContextProvider>
               )
 
