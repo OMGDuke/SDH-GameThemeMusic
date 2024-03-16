@@ -20,8 +20,13 @@ type Props = {
 }
 
 export default function Index({ serverAPI }: Props) {
-  const { settings, setDefaultMuted, setPipedInstance, setVolume } =
-    useSettings(serverAPI)
+  const {
+    settings,
+    isLoading: settingsIsLoading,
+    setDefaultMuted,
+    setPipedInstance,
+    setVolume
+  } = useSettings(serverAPI)
 
   const t = useTranslations()
 
@@ -65,22 +70,23 @@ export default function Index({ serverAPI }: Props) {
             }}
           />
         </PanelSectionRow>
+        <PanelSectionRow>
+          <DropdownItem
+            disabled={
+              instancesLoading || !instanceOptions?.length || settingsIsLoading
+            }
+            label={t('pipedInstance')}
+            description={t('pipedInstanceDescription')}
+            menuLabel={t('pipedInstance')}
+            rgOptions={instanceOptions}
+            selectedOption={
+              instanceOptions.find((o) => o.data === settings.pipedInstance)
+                ?.data
+            }
+            onChange={(newVal) => setPipedInstance(newVal.data)}
+          />
+        </PanelSectionRow>
       </PanelSection>
-      <PanelSectionRow>
-        <DropdownItem
-          disabled={instancesLoading || !instanceOptions?.length}
-          label={t('pipedInstance')}
-          description={t('pipedInstanceDescription')}
-          menuLabel={t('pipedInstance')}
-          rgOptions={instanceOptions}
-          selectedOption={
-            instanceOptions.find(
-              (o) => o.data === ('asd' || settings.pipedInstance)
-            )?.data
-          }
-          onChange={(newVal) => setPipedInstance(newVal.data)}
-        />
-      </PanelSectionRow>
       <PanelSection title={t('overrides')}>
         <PanelSectionRow>
           <ButtonItem
