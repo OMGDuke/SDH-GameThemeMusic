@@ -36,15 +36,6 @@ export default function Index({ serverAPI }: Props) {
     [instances]
   )
 
-  async function changeInstance(option: SingleDropdownOption) {
-    console.log(option.data)
-    try {
-      setPipedInstance(option.data)
-    } catch (err) {
-      console.log({ err })
-    }
-  }
-
   return (
     <div>
       <PanelSection title={t('settings')}>
@@ -83,9 +74,11 @@ export default function Index({ serverAPI }: Props) {
           menuLabel={t('pipedInstance')}
           rgOptions={instanceOptions}
           selectedOption={
-            instanceOptions.find((o) => o.data === settings.pipedInstance)?.data
+            instanceOptions.find(
+              (o) => o.data === ('asd' || settings.pipedInstance)
+            )?.data
           }
-          onChange={(newVal) => changeInstance(newVal)}
+          onChange={(newVal) => setPipedInstance(newVal.data)}
         />
       </PanelSectionRow>
       <PanelSection title={t('overrides')}>
