@@ -23,7 +23,7 @@ const useAudioPlayer = (
     return audio
   }, [])
 
-  audioPlayer.oncanplay = () => {
+  audioPlayer.oncanplaythrough = () => {
     setIsReady(true)
     setOnThemePage(true)
   }
