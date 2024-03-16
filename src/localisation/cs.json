@@ -12,6 +12,8 @@
     "gameVolumeDescription": "Adjust music volume for this game",
     "noMusicLabel": "No Music",
     "overrides": "Overrides",
+    "pipedInstance": "Piped Instance",
+    "pipedInstanceDescription": "Which Piped instance would you like to use for searching and getting audio?",
     "play": "Play",
     "resetVolume": "Reset",
     "search": "Search",
