@@ -12,6 +12,8 @@
     "gameVolumeDescription": "Настройване на силата на музиката за тази игра",
     "noMusicLabel": "Няма музика",
     "overrides": "Замени",
+    "pipedInstance": "Piped Instance",
+    "pipedInstanceDescription": "Which Piped instance would you like to use for searching and getting audio?",
     "play": "Пускане",
     "resetVolume": "Нулиране",
     "search": "Търсене",
