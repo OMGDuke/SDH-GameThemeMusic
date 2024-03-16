@@ -12,6 +12,8 @@
     "gameVolumeDescription": "Bu oyun için müzik sesini ayarlayın",
     "noMusicLabel": "Müzik yok",
     "overrides": "Geçersiz Kılmalar",
+    "pipedInstance": "Piped Instance",
+    "pipedInstanceDescription": "Which Piped instance would you like to use for searching and getting audio?",
     "play": "Oynat",
     "resetVolume": "Sıfırla",
     "search": "Ara",

@@ -12,6 +12,8 @@
     "gameVolumeDescription": "Säädä musiikin äänenvoimakkuutta tälle pelille",
     "noMusicLabel": "Ei musiikkia",
     "overrides": "Ylikirjoitukset",
+    "pipedInstance": "Piped Instance",
+    "pipedInstanceDescription": "Which Piped instance would you like to use for searching and getting audio?",
     "play": "Soita",
     "resetVolume": "Palauta",
     "search": "Hae",
