@@ -23,7 +23,7 @@ export default definePlugin((serverAPI: ServerAPI) => {
       <AudioLoaderCompatStateContextProvider
         AudioLoaderCompatStateClass={state}
       >
-        <ChangeTheme serverAPI={serverAPI} />,
+        <ChangeTheme serverAPI={serverAPI} />
       </AudioLoaderCompatStateContextProvider>
     ),
     {
@@ -55,7 +55,7 @@ export default definePlugin((serverAPI: ServerAPI) => {
     icon: <GiMusicalNotes />,
     content: (
       <SettingsProvider>
-        <Settings serverAPI={serverAPI} />
+        <Settings />
       </SettingsProvider>
     ),
     onDismount() {

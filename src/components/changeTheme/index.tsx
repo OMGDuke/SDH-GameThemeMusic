@@ -10,7 +10,7 @@ import YouTubeVideo from '../../../types/YouTube'
 import GameSettings from './gameSettings'
 
 export default function ChangeTheme({ serverAPI }: { serverAPI: ServerAPI }) {
-  const [currentTab, setCurrentTab] = useState<string>()
+  const [currentTab, setCurrentTab] = useState<string>('change-music-tab')
   const t = useTranslations()
   const { appid } = useParams<{ appid: string }>()
   const appDetails = appStore.GetAppOverviewByGameID(parseInt(appid))
@@ -63,7 +63,6 @@ export default function ChangeTheme({ serverAPI }: { serverAPI: ServerAPI }) {
       }}
     >
       <Tabs
-        title="Game Theme Music"
         autoFocusContents
         activeTab={currentTab}
         onShowTab={setCurrentTab}
