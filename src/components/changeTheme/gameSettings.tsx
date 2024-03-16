@@ -11,20 +11,20 @@ import { getCache, updateCache } from '../../cache/musicCache'
 
 import { getAudioUrlFromVideoId, getAudio } from '../../actions/audio'
 import useTranslations from '../../hooks/useTranslations'
-import { useSettings } from '../../context/settingsContext'
+import { useSettings } from '../../hooks/useSettings'
 import { FaVolumeUp } from 'react-icons/fa'
 import Spinner from '../spinner'
 import useAudioPlayer from '../../hooks/useAudioPlayer'
 
 export default function GameSettings({ serverAPI }: { serverAPI: ServerAPI }) {
   const t = useTranslations()
-  const { state: settingsState } = useSettings()
+  const { settings, isLoading: settingsIsLoading } = useSettings(serverAPI)
   const { appid } = useParams<{ appid: string }>()
   const appDetails = appStore.GetAppOverviewByGameID(parseInt(appid))
   const appName = appDetails?.display_name
 
   const [currentAudio, setCurrentAudio] = useState<string>()
-  const [themeVolume, setThemeVolume] = useState(settingsState.volume)
+  const [themeVolume, setThemeVolume] = useState(settings.volume)
   const [loading, setLoading] = useState(true)
 
   const audioPlayer = useAudioPlayer(currentAudio)
@@ -35,6 +35,8 @@ export default function GameSettings({ serverAPI }: { serverAPI: ServerAPI }) {
       const cache = await getCache(parseInt(appid))
       if (typeof cache?.volume === 'number' && isFinite(cache.volume)) {
         setThemeVolume(cache.volume)
+      } else {
+        setThemeVolume(settings.volume)
       }
       if (cache?.videoId?.length) {
         const newAudio = await getAudioUrlFromVideoId(serverAPI, {
@@ -48,9 +50,10 @@ export default function GameSettings({ serverAPI }: { serverAPI: ServerAPI }) {
       }
       setLoading(false)
     }
-
-    getData()
-  }, [appid])
+    if (!settingsIsLoading) {
+      getData()
+    }
+  }, [appid, settingsIsLoading])
 
   function updateThemeVolume(newVol: number, reset?: boolean) {
     setThemeVolume(newVol)
@@ -106,7 +109,7 @@ export default function GameSettings({ serverAPI }: { serverAPI: ServerAPI }) {
           )}
         </DialogButton>
         <DialogButton
-          onClick={() => updateThemeVolume(settingsState.volume, true)}
+          onClick={() => updateThemeVolume(settings.volume, true)}
           style={{ height: 'max-content' }}
         >
           {t('resetVolume')}

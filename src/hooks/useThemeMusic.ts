@@ -4,10 +4,10 @@ import { useEffect, useState } from 'react'
 import { getAudio, getAudioUrlFromVideoId } from '../actions/audio'
 
 import { getCache, updateCache } from '../cache/musicCache'
-import { useSettings } from '../context/settingsContext'
+import { useSettings } from '../hooks/useSettings'
 
 const useThemeMusic = (serverAPI: ServerAPI, appId: number) => {
-  const { state: settingsState } = useSettings()
+  const { settings, isLoading: settingsLoading } = useSettings(serverAPI)
   const [audio, setAudio] = useState<{ videoId: string; audioUrl: string }>({
     videoId: '',
     audioUrl: ''
@@ -29,7 +29,7 @@ const useThemeMusic = (serverAPI: ServerAPI, appId: number) => {
         if (newAudio?.length) {
           return setAudio({ videoId: cache.videoId, audioUrl: newAudio })
         }
-      } else if (settingsState.defaultMuted) {
+      } else if (settings.defaultMuted) {
         return setAudio({ videoId: '', audioUrl: '' })
       } else {
         const newAudio = await getAudio(serverAPI, appName as string)
@@ -43,13 +43,13 @@ const useThemeMusic = (serverAPI: ServerAPI, appId: number) => {
         return setAudio(newAudio)
       }
     }
-    if (appName?.length) {
+    if (appName?.length && !settingsLoading) {
       getData()
     }
     return () => {
       ignore = true
     }
-  }, [appName])
+  }, [appName, settingsLoading])
 
   return {
     audio

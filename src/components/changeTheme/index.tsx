@@ -4,13 +4,12 @@ import React, { useEffect, useState } from 'react'
 import useTranslations from '../../hooks/useTranslations'
 import ChangePage from './changePage'
 import AboutPage from './aboutPage'
-import { SettingsProvider } from '../../context/settingsContext'
 import { getYouTubeSearchResults } from '../../actions/audio'
 import YouTubeVideo from '../../../types/YouTube'
 import GameSettings from './gameSettings'
 
 export default function ChangeTheme({ serverAPI }: { serverAPI: ServerAPI }) {
-  const [currentTab, setCurrentTab] = useState<string>()
+  const [currentTab, setCurrentTab] = useState<string>('change-music-tab')
   const t = useTranslations()
   const { appid } = useParams<{ appid: string }>()
   const appDetails = appStore.GetAppOverviewByGameID(parseInt(appid))
@@ -63,7 +62,6 @@ export default function ChangeTheme({ serverAPI }: { serverAPI: ServerAPI }) {
       }}
     >
       <Tabs
-        title="Game Theme Music"
         autoFocusContents
         activeTab={currentTab}
         onShowTab={setCurrentTab}
@@ -71,25 +69,19 @@ export default function ChangeTheme({ serverAPI }: { serverAPI: ServerAPI }) {
           {
             title: t('changeThemeMusic'),
             content: (
-              <SettingsProvider>
-                <ChangePage
-                  serverAPI={serverAPI}
-                  videos={videos}
-                  loading={loading}
-                  handlePlay={handlePlay}
-                  customSearch={setSearchTerm}
-                />
-              </SettingsProvider>
+              <ChangePage
+                serverAPI={serverAPI}
+                videos={videos}
+                loading={loading}
+                handlePlay={handlePlay}
+                customSearch={setSearchTerm}
+              />
             ),
             id: 'change-music-tab'
           },
           {
             title: t('gameSettings'),
-            content: (
-              <SettingsProvider>
-                <GameSettings serverAPI={serverAPI} />
-              </SettingsProvider>
-            ),
+            content: <GameSettings serverAPI={serverAPI} />,
             id: 'game-settings-tab'
           },
           { title: t('about'), content: <AboutPage />, id: 'about-tab' }

@@ -48,7 +48,7 @@ export default function AudioPlayer({
     if (audioPlayer.isReady) {
       audioPlayer.setVolume(volume)
     }
-  }, [audioPlayer.isReady])
+  }, [audioPlayer.isReady, volume])
 
   useEffect(() => {
     if (audioPlayer.isReady) {
@@ -77,22 +77,36 @@ export default function AudioPlayer({
           background: 'var(--main-editor-bg-color)',
           borderRadius: '6px',
           display: 'grid',
-          gridTemplateRows: '129px max-content max-content',
+          gridTemplateRows: 'max-content max-content max-content',
           overflow: 'hidden',
           padding: '10px',
           width: '230px'
         }}
       >
-        <img
-          src={video.thumbnail}
-          alt={video.title}
+        <div
           style={{
-            overflow: 'hidden',
+            position: 'relative',
             width: '230px',
-            height: '129px',
-            borderRadius: '6px'
+            height: 0,
+            paddingBottom: '56.25%',
+            overflow: 'hidden'
           }}
-        />
+        >
+          <img
+            src={video.thumbnail}
+            alt={video.title}
+            style={{
+              overflow: 'hidden',
+              width: '230px',
+              borderRadius: '6px',
+              position: 'absolute',
+              top: '50%',
+              left: 0,
+              transform: 'translateY(-50%)',
+              height: 'auto'
+            }}
+          />
+        </div>
         <p
           style={{
             color: 'var(--main-editor-text-color)',

@@ -4,7 +4,6 @@ import { definePlugin, ServerAPI, staticClasses } from 'decky-frontend-lib'
 import { GiMusicalNotes } from 'react-icons/gi'
 
 import Settings from './components/settings'
-import { SettingsProvider } from './context/settingsContext'
 import patchLibraryApp from './lib/patchLibraryApp'
 import patchContextMenu, { LibraryContextMenu } from './lib/patchContextMenu'
 import ChangeTheme from './components/changeTheme'
@@ -23,7 +22,7 @@ export default definePlugin((serverAPI: ServerAPI) => {
       <AudioLoaderCompatStateContextProvider
         AudioLoaderCompatStateClass={state}
       >
-        <ChangeTheme serverAPI={serverAPI} />,
+        <ChangeTheme serverAPI={serverAPI} />
       </AudioLoaderCompatStateContextProvider>
     ),
     {
@@ -53,11 +52,7 @@ export default definePlugin((serverAPI: ServerAPI) => {
   return {
     title: <div className={staticClasses.Title}>Game Theme Music</div>,
     icon: <GiMusicalNotes />,
-    content: (
-      <SettingsProvider>
-        <Settings />
-      </SettingsProvider>
-    ),
+    content: <Settings serverAPI={serverAPI} />,
     onDismount() {
       AppStateRegistrar.unregister()
       serverAPI.routerHook.removePatch('/library/app/:appid', libraryPatch)

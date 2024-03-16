@@ -1,28 +1,21 @@
 import { ServerAPI } from 'decky-frontend-lib'
 import YouTubeVideo from '../../types/YouTube'
+import { Settings, defaultSettings } from '../hooks/useSettings'
 
 type YouTubeInitialData = {
-  contents: {
-    twoColumnSearchResultsRenderer: {
-      primaryContents: {
-        sectionListRenderer: {
-          contents: {
-            itemSectionRenderer: {
-              contents: {
-                videoRenderer: {
-                  title: { runs: { text: string }[] }
-                  videoId: string
-                  thumbnail: {
-                    thumbnails: { url: string }[]
-                  }
-                }
-              }[]
-            }
-          }[]
-        }
-      }
-    }
-  }
+  title: string
+  url: string
+  thumbnail: string
+}[]
+
+async function getEndpoint(serverApi: ServerAPI) {
+  const savedSettings = (
+    await serverApi.callPluginMethod('get_setting', {
+      key: 'settings',
+      default: defaultSettings
+    })
+  ).result as Settings
+  return savedSettings.pipedInstance
 }
 
 export async function getYouTubeSearchResults(
@@ -30,92 +23,77 @@ export async function getYouTubeSearchResults(
   appName: string,
   customSearch?: boolean
 ): Promise<YouTubeVideo[] | undefined> {
-  const searchTerm = `${encodeURIComponent(appName)}${
-    customSearch ? '' : '%20Theme%20Music'
-  }`
-  const req = {
-    method: 'GET',
-    url: `https://www.youtube.com/results?search_query=${searchTerm}&sp=EgIQAQ%253D%253D`,
-    timeout: 8000
-  }
-  const res = await serverAPI.callServerMethod<
-    { method: string; url: string },
-    { body: string; status: number }
-  >('http_request', req)
-  if (res.success && res.result.status === 200) {
-    const regex = /ytInitialData\s*=\s*({.*?});/
-    const match = res.result.body.match(regex)
-
-    if (match) {
-      const ytInitialData: YouTubeInitialData = JSON.parse(match[1])
-      const results: YouTubeVideo[] | undefined =
-        ytInitialData?.contents?.twoColumnSearchResultsRenderer?.primaryContents?.sectionListRenderer?.contents
-          ?.find(
-            (obj) =>
-              Object.prototype.hasOwnProperty.call(
-                obj,
-                'itemSectionRenderer'
-              ) &&
-              obj?.itemSectionRenderer?.contents?.[0] &&
-              obj?.itemSectionRenderer?.contents?.filter((vidObj) =>
-                Object.prototype.hasOwnProperty.call(vidObj, 'videoRenderer')
-              )?.length
-          )
-          ?.itemSectionRenderer?.contents?.filter((obj) =>
-            Object.prototype.hasOwnProperty.call(obj, 'videoRenderer')
-          )
-          .map((res) => {
-            return {
-              appName,
-              title: res?.videoRenderer?.title?.runs?.[0]?.text,
-              id: res?.videoRenderer?.videoId,
-              thumbnail: res?.videoRenderer?.thumbnail?.thumbnails?.[0]?.url
-            }
-          })
-          .filter((res: { title: string; id: string }) => res.id?.length)
-      return results
-    } else {
+  try {
+    const searchTerm = `${encodeURIComponent(appName)}${
+      customSearch ? '' : '%20Theme%20Music'
+    }`
+    const endpoint = await getEndpoint(serverAPI)
+    const req = {
+      method: 'GET',
+      url: `${endpoint}/search?q=${searchTerm}&filter=all`,
+      timeout: 8000
+    }
+    const res = await serverAPI.callServerMethod<
+      { method: string; url: string },
+      { body: string; status: number }
+    >('http_request', req)
+    if (res.success && res.result.status === 200) {
+      const result: { items: YouTubeInitialData } = JSON.parse(res.result?.body)
+      if (result.items.length) {
+        const regex = /\/watch\?v=([A-Za-z0-9_-]+)/
+        return result.items
+          .map((res) => ({
+            title: res.title,
+            id: res.url.match(regex)?.[1] || '',
+            thumbnail: res.thumbnail || 'https://i.ytimg.com/vi/0.jpg'
+          }))
+          .filter((res) => res.id.length)
+      }
       return undefined
     }
+  } catch (err) {
+    return undefined
   }
   return undefined
+}
+
+type Audio = {
+  mimeType: string
+  url: string
+  bitrate: number
 }
 
 export async function getAudioUrlFromVideoId(
   serverAPI: ServerAPI,
   video: { title: string; id: string }
 ): Promise<string | undefined> {
-  const req = {
-    method: 'GET',
-    url: `https://www.youtube.com/watch?v=${encodeURIComponent(video.id)}`
-  }
-  const res = await serverAPI.callServerMethod<
-    { method: string; url: string },
-    { body: string; status: number }
-  >('http_request', req)
-  if (res.success && res.result.status === 200) {
-    const configJsonMatch = res.result.body.match(
-      /ytInitialPlayerResponse\s*=\s*({.+?})\s*;/
-    )
-    if (!configJsonMatch) {
-      return undefined
+  try {
+    const endpoint = await getEndpoint(serverAPI)
+    const req = {
+      method: 'GET',
+      url: `${endpoint}/streams/${encodeURIComponent(video.id)}`
     }
+    const res = await serverAPI.callServerMethod<
+      { method: string; url: string },
+      { body: string; status: number }
+    >('http_request', req)
 
-    const configJson = JSON.parse(configJsonMatch[1])
-    const streamMap = configJson?.streamingData?.adaptiveFormats?.filter(
-      (f: { mimeType: string }) => f.mimeType.startsWith('audio/')
-    )[0]
-    if (!streamMap?.url) return undefined
+    if (res.success && res.result.status === 200) {
+      const audioFormats: { audioStreams: Audio[] } = JSON.parse(
+        res.result?.body
+      )
 
-    const signature = streamMap?.signatureCipher
-      ? streamMap.signatureCipher
-          .split('&')
-          .find((s: string) => s.startsWith('s='))
-          .substr(2)
-      : undefined
-    return `${streamMap.url}&${
-      signature ? `sig=${signature}` : 'ratebypass=yes'
-    }`
+      const audios = audioFormats.audioStreams.filter(
+        (aud) => aud.mimeType?.includes('audio/webm')
+      )
+      const audio = audios.reduce((prev, current) => {
+        return prev.bitrate > current.bitrate ? prev : current
+      }, audios[0])
+
+      return audio?.url
+    }
+  } catch (err) {
+    return undefined
   }
   return undefined
 }
@@ -138,4 +116,47 @@ export async function getAudio(
     return audio
   }
   return undefined
+}
+
+export async function getPipedInstances(
+  serverAPI: ServerAPI
+): Promise<{ name: string; url: string }[]> {
+  const req = {
+    method: 'GET',
+    url: 'https://piped-instances.kavin.rocks/'
+  }
+  const res = await serverAPI.callServerMethod<
+    { method: string; url: string },
+    { body: string; status: number }
+  >('http_request', req)
+  if (res.success && res.result.status === 200) {
+    const instances: {
+      api_url: string
+      cache: boolean
+      cdn: boolean
+      image_proxy_url: string
+      last_checked: number
+      locations: string
+      name: string
+      registered: number
+      registration_disabled: boolean
+      s3_enabled: boolean
+      up_to_date: boolean
+      uptime_24h: number
+      uptime_7d: number
+      uptime_30d: number
+      version: string
+    }[] = JSON.parse(res.result?.body)
+
+    if (instances?.length) {
+      return instances.map((ins) => ({
+        name: `${ins.locations} ${ins.name || ins.api_url} ${
+          ins.uptime_30d ? `| Uptime (30d): ${Math.floor(ins.uptime_30d)}%` : ''
+        }`,
+        url: ins.api_url
+      }))
+    }
+    return []
+  }
+  return []
 }
