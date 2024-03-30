@@ -13,7 +13,7 @@
     "noMusicLabel": "Keine Musik",
     "overrides": "Überschreibungen",
     "pipedInstance": "Piped Instance",
-    "pipedInstanceDescription": "Which Piped instance would you like to use for searching and getting audio?",
+    "pipedInstanceDescription": "Welche Piped Instanz möchtest du für die Suche und das Abrufen von Audio verwenden?",
     "play": "Abspielen",
     "resetVolume": "Reset",
     "search": "Suchen",
