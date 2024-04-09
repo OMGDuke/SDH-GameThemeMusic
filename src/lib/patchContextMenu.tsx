@@ -68,10 +68,10 @@ const contextMenuPatch = (LibraryContextMenu: any) => {
           component.type.prototype,
           'shouldComponentUpdate',
           ([nextProps]: any, shouldUpdate: any) => {
-            const sgdbIdx = nextProps.children.findIndex(
-              (x: any) => x?.key === 'sgdb-change-artwork'
+            const gtmIdx = nextProps.children.findIndex(
+              (x: any) => x?.key === 'game-theme-music-change-music'
             )
-            if (sgdbIdx != -1) nextProps.children.splice(sgdbIdx, 1)
+            if (gtmIdx != -1) nextProps.children.splice(gtmIdx, 1)
 
             if (shouldUpdate === true) {
               let updatedAppid: number = appid
