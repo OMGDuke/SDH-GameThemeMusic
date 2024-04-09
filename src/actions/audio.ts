@@ -83,8 +83,8 @@ export async function getAudioUrlFromVideoId(
         res.result?.body
       )
 
-      const audios = audioFormats.audioStreams.filter(
-        (aud) => aud.mimeType?.includes('audio/webm')
+      const audios = audioFormats.audioStreams.filter((aud) =>
+        aud.mimeType?.includes('audio/webm')
       )
       const audio = audios.reduce((prev, current) => {
         return prev.bitrate > current.bitrate ? prev : current

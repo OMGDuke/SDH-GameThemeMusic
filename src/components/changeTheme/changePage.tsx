@@ -11,7 +11,7 @@ import {
 import React, { useEffect, useState } from 'react'
 import { useSettings } from '../../hooks/useSettings'
 import AudioPlayer from './audioPlayer'
-import { getCache, updateCache } from '../../cache/musicCache'
+import { getSongSettings, updateSongSettings } from '../../songSettings'
 import useTranslations from '../../hooks/useTranslations'
 import YouTubeVideo from '../../../types/YouTube'
 import NoMusic from './noMusic'
@@ -39,8 +39,8 @@ export default function ChangePage({
 
   useEffect(() => {
     async function getData() {
-      const cache = await getCache(parseInt(appid))
-      setSelected(cache?.videoId)
+      const songSettings = await getSongSettings(parseInt(appid))
+      setSelected(songSettings?.videoId)
     }
     getData()
   }, [appid])
@@ -51,7 +51,7 @@ export default function ChangePage({
     audioUrl: string
   }) {
     setSelected(audio.videoId)
-    updateCache(parseInt(appid), { videoId: audio.videoId })
+    updateSongSettings(parseInt(appid), { videoId: audio.videoId })
   }
 
   return (

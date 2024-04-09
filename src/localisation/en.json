@@ -24,5 +24,7 @@
     "supportDescription": "Visit the Steam Deck Homebrew Discord deckbrew.xyz/discord",
     "supportLabel": "Support",
     "volume": "Music Volume",
-    "volumeDescription": "Adjust music volume"
+    "volumeDescription": "Adjust music volume",
+    "offlineMode": "Offline Mode",
+    "offlineModeDescription": "Download songs on first play for use offline"
 }

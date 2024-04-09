@@ -3,7 +3,7 @@ import React, { ReactElement, useEffect } from 'react'
 
 import useThemeMusic from '../../hooks/useThemeMusic'
 import { useSettings } from '../../hooks/useSettings'
-import { getCache } from '../../cache/musicCache'
+import { getSongSettings } from '../../songSettings'
 import useAudioPlayer from '../../hooks/useAudioPlayer'
 
 export default function ThemePlayer({
@@ -18,9 +18,12 @@ export default function ThemePlayer({
 
   useEffect(() => {
     async function getData() {
-      const cache = await getCache(parseInt(appid))
-      if (typeof cache?.volume === 'number' && isFinite(cache.volume)) {
-        audioPlayer.setVolume(cache.volume)
+      const songSettings = await getSongSettings(parseInt(appid))
+      if (
+        typeof songSettings?.volume === 'number' &&
+        isFinite(songSettings.volume)
+      ) {
+        audioPlayer.setVolume(songSettings.volume)
       } else {
         audioPlayer.setVolume(settings.volume)
       }

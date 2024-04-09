@@ -7,7 +7,7 @@ import {
   useParams
 } from 'decky-frontend-lib'
 import React, { useEffect, useState } from 'react'
-import { getCache, updateCache } from '../../cache/musicCache'
+import { getSongSettings, updateSongSettings } from '../../songSettings'
 
 import { getAudioUrlFromVideoId, getAudio } from '../../actions/audio'
 import useTranslations from '../../hooks/useTranslations'
@@ -32,16 +32,19 @@ export default function GameSettings({ serverAPI }: { serverAPI: ServerAPI }) {
   useEffect(() => {
     async function getData() {
       setLoading(true)
-      const cache = await getCache(parseInt(appid))
-      if (typeof cache?.volume === 'number' && isFinite(cache.volume)) {
-        setThemeVolume(cache.volume)
+      const songSettings = await getSongSettings(parseInt(appid))
+      if (
+        typeof songSettings?.volume === 'number' &&
+        isFinite(songSettings.volume)
+      ) {
+        setThemeVolume(songSettings.volume)
       } else {
         setThemeVolume(settings.volume)
       }
-      if (cache?.videoId?.length) {
+      if (songSettings?.videoId?.length) {
         const newAudio = await getAudioUrlFromVideoId(serverAPI, {
           title: '',
-          id: cache?.videoId
+          id: songSettings?.videoId
         })
         setCurrentAudio(newAudio)
       } else {
@@ -58,7 +61,7 @@ export default function GameSettings({ serverAPI }: { serverAPI: ServerAPI }) {
   function updateThemeVolume(newVol: number, reset?: boolean) {
     setThemeVolume(newVol)
     audioPlayer.setVolume(newVol)
-    updateCache(parseInt(appid), { volume: reset ? undefined : newVol })
+    updateSongSettings(parseInt(appid), { volume: reset ? undefined : newVol })
   }
 
   return (

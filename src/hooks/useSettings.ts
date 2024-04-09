@@ -4,12 +4,14 @@ import { ServerAPI } from 'decky-frontend-lib'
 
 export type Settings = {
   defaultMuted: boolean
+  offlineMode: boolean
   pipedInstance: string
   volume: number
 }
 
 export const defaultSettings = {
   defaultMuted: false,
+  offlineMode: false,
   pipedInstance: 'https://pipedapi.kavin.rocks',
   volume: 1
 }
@@ -51,6 +53,9 @@ export const useSettings = (serverApi: ServerAPI) => {
   function setDefaultMuted(value: Settings['defaultMuted']) {
     updateSettings('defaultMuted', value)
   }
+  function setOfflineMode(value: Settings['offlineMode']) {
+    updateSettings('offlineMode', value)
+  }
   function setPipedInstance(value: Settings['pipedInstance']) {
     updateSettings('pipedInstance', value)
   }
@@ -58,5 +63,12 @@ export const useSettings = (serverApi: ServerAPI) => {
     updateSettings('volume', value)
   }
 
-  return { settings, setDefaultMuted, setPipedInstance, setVolume, isLoading }
+  return {
+    settings,
+    setDefaultMuted,
+    setOfflineMode,
+    setPipedInstance,
+    setVolume,
+    isLoading
+  }
 }

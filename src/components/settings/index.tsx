@@ -11,8 +11,8 @@ import {
 import React, { useMemo } from 'react'
 import { useSettings } from '../../hooks/useSettings'
 import useTranslations from '../../hooks/useTranslations'
-import { FaVolumeMute, FaVolumeUp } from 'react-icons/fa'
-import { clearCache } from '../../cache/musicCache'
+import { FaDownload, FaVolumeMute, FaVolumeUp } from 'react-icons/fa'
+import { clearSongSettings } from '../../songSettings'
 import usePipedInstances from '../../hooks/usePipedInstances'
 
 type Props = {
@@ -24,6 +24,7 @@ export default function Index({ serverAPI }: Props) {
     settings,
     isLoading: settingsIsLoading,
     setDefaultMuted,
+    setOfflineMode,
     setPipedInstance,
     setVolume
   } = useSettings(serverAPI)
@@ -86,6 +87,17 @@ export default function Index({ serverAPI }: Props) {
             onChange={(newVal) => setPipedInstance(newVal.data)}
           />
         </PanelSectionRow>
+        <PanelSectionRow>
+          <ToggleField
+            icon={<FaDownload />}
+            checked={settings.offlineMode}
+            label={t('offlineMode')}
+            description={t('offlineModeDescription')}
+            onChange={(newVal: boolean) => {
+              setOfflineMode(newVal)
+            }}
+          />
+        </PanelSectionRow>
       </PanelSection>
       <PanelSection title={t('overrides')}>
         <PanelSectionRow>
@@ -93,7 +105,7 @@ export default function Index({ serverAPI }: Props) {
             label={t('deleteOverridesLabel')}
             bottomSeparator="none"
             layout="below"
-            onClick={() => clearCache()}
+            onClick={() => clearSongSettings()}
           >
             {t('deleteOverrides')}
           </ButtonItem>
