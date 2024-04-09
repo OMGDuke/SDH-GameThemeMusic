@@ -83,8 +83,8 @@ export async function getAudioUrlFromVideoId(
         res.result?.body
       )
 
-      const audios = audioFormats.audioStreams.filter(
-        (aud) => aud.mimeType?.includes('audio/webm')
+      const audios = audioFormats.audioStreams.filter((aud) =>
+        aud.mimeType?.includes('audio/webm')
       )
       const audio = audios.reduce((prev, current) => {
         return prev.bitrate > current.bitrate ? prev : current
@@ -149,12 +149,14 @@ export async function getPipedInstances(
     }[] = JSON.parse(res.result?.body)
 
     if (instances?.length) {
-      return instances.map((ins) => ({
-        name: `${ins.locations} ${ins.name || ins.api_url} ${
-          ins.uptime_30d ? `| Uptime (30d): ${Math.floor(ins.uptime_30d)}%` : ''
-        }`,
-        url: ins.api_url
-      }))
+      return instances
+        .sort((a, b) => b.uptime_30d - a.uptime_30d)
+        .map((ins) => ({
+          name: `${ins.locations} ${ins.name || ins.api_url} ${
+            ins.uptime_30d ? `| Uptime: ${Math.floor(ins.uptime_30d)}%` : ''
+          }`,
+          url: ins.api_url
+        }))
     }
     return []
   }
