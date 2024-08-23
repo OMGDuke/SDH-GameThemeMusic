@@ -1,11 +1,10 @@
 import {
   DialogButton,
   Focusable,
-  ServerAPI,
   SliderField,
   PanelSectionRow,
   useParams
-} from 'decky-frontend-lib'
+} from '@decky/ui'
 import React, { useEffect, useState } from 'react'
 import { getCache, updateCache } from '../../cache/musicCache'
 
@@ -16,9 +15,9 @@ import { FaVolumeUp } from 'react-icons/fa'
 import Spinner from '../spinner'
 import useAudioPlayer from '../../hooks/useAudioPlayer'
 
-export default function GameSettings({ serverAPI }: { serverAPI: ServerAPI }) {
+export default function GameSettings() {
   const t = useTranslations()
-  const { settings, isLoading: settingsIsLoading } = useSettings(serverAPI)
+  const { settings, isLoading: settingsIsLoading } = useSettings()
   const { appid } = useParams<{ appid: string }>()
   const appDetails = appStore.GetAppOverviewByGameID(parseInt(appid))
   const appName = appDetails?.display_name
@@ -39,13 +38,13 @@ export default function GameSettings({ serverAPI }: { serverAPI: ServerAPI }) {
         setThemeVolume(settings.volume)
       }
       if (cache?.videoId?.length) {
-        const newAudio = await getAudioUrlFromVideoId(serverAPI, {
+        const newAudio = await getAudioUrlFromVideoId({
           title: '',
           id: cache?.videoId
         })
         setCurrentAudio(newAudio)
       } else {
-        const newAudio = await getAudio(serverAPI, appName as string)
+        const newAudio = await getAudio(appName as string)
         setCurrentAudio(newAudio?.audioUrl)
       }
       setLoading(false)

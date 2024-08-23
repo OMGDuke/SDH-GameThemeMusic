@@ -1,4 +1,4 @@
-import { ServerAPI, Tabs, useParams } from 'decky-frontend-lib'
+import { Tabs, useParams } from '@decky/ui'
 import React, { useEffect, useState } from 'react'
 
 import useTranslations from '../../hooks/useTranslations'
@@ -8,7 +8,7 @@ import { getYouTubeSearchResults } from '../../actions/audio'
 import YouTubeVideo from '../../../types/YouTube'
 import GameSettings from './gameSettings'
 
-export default function ChangeTheme({ serverAPI }: { serverAPI: ServerAPI }) {
+export default function ChangeTheme() {
   const [currentTab, setCurrentTab] = useState<string>('change-music-tab')
   const t = useTranslations()
   const { appid } = useParams<{ appid: string }>()
@@ -26,7 +26,6 @@ export default function ChangeTheme({ serverAPI }: { serverAPI: ServerAPI }) {
     async function getData() {
       setLoading(true)
       const res = await getYouTubeSearchResults(
-        serverAPI,
         searchTerm?.length ? searchTerm : appName,
         Boolean(searchTerm?.length)
       )
@@ -70,7 +69,6 @@ export default function ChangeTheme({ serverAPI }: { serverAPI: ServerAPI }) {
             title: t('changeThemeMusic'),
             content: (
               <ChangePage
-                serverAPI={serverAPI}
                 videos={videos}
                 loading={loading}
                 handlePlay={handlePlay}
@@ -81,7 +79,7 @@ export default function ChangeTheme({ serverAPI }: { serverAPI: ServerAPI }) {
           },
           {
             title: t('gameSettings'),
-            content: <GameSettings serverAPI={serverAPI} />,
+            content: <GameSettings />,
             id: 'game-settings-tab'
           },
           { title: t('about'), content: <AboutPage />, id: 'about-tab' }

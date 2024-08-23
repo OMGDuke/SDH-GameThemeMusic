@@ -3,11 +3,10 @@ import {
   Focusable,
   PanelSection,
   PanelSectionRow,
-  ServerAPI,
   SteamSpinner,
   TextField,
   useParams
-} from 'decky-frontend-lib'
+} from '@decky/ui'
 import React, { useEffect, useState } from 'react'
 import { useSettings } from '../../hooks/useSettings'
 import AudioPlayer from './audioPlayer'
@@ -20,17 +19,15 @@ export default function ChangePage({
   customSearch,
   handlePlay,
   loading,
-  serverAPI,
   videos
 }: {
   videos: (YouTubeVideo & { isPlaying: boolean })[]
   loading: boolean
   handlePlay: (idx: number, startPlaying: boolean) => void
-  serverAPI: ServerAPI
   customSearch: (term: string | undefined) => void
 }) {
   const t = useTranslations()
-  const { settings } = useSettings(serverAPI)
+  const { settings } = useSettings()
   const { appid } = useParams<{ appid: string }>()
   const appDetails = appStore.GetAppOverviewByGameID(parseInt(appid))
   const appName = appDetails?.display_name?.replace(/(™|®|©)/g, '')
@@ -122,7 +119,6 @@ export default function ChangePage({
             {videos.map((video, index) => (
               <AudioPlayer
                 key={video.id}
-                serverAPI={serverAPI}
                 video={video}
                 volume={settings.volume}
                 handlePlay={(status) => {

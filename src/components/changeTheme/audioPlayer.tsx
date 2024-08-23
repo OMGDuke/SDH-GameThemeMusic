@@ -1,4 +1,4 @@
-import { DialogButton, Focusable, ServerAPI } from 'decky-frontend-lib'
+import { DialogButton, Focusable } from '@decky/ui'
 import React, { useEffect, useState } from 'react'
 import useTranslations from '../../hooks/useTranslations'
 import { getAudioUrlFromVideoId } from '../../actions/audio'
@@ -11,11 +11,9 @@ export default function AudioPlayer({
   handlePlay,
   selected,
   selectNewAudio,
-  serverAPI,
   video,
   volume
 }: {
-  serverAPI: ServerAPI
   video: YouTubeVideo & { isPlaying: boolean }
   volume: number
   handlePlay: (startPlaying: boolean) => void
@@ -35,7 +33,7 @@ export default function AudioPlayer({
   useEffect(() => {
     async function getData() {
       setLoading(true)
-      const res = await getAudioUrlFromVideoId(serverAPI, video)
+      const res = await getAudioUrlFromVideoId(video)
       setAudio(res)
       setLoading(false)
     }

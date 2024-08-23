@@ -1,9 +1,8 @@
-import { ServerAPI } from 'decky-frontend-lib'
 import { useEffect, useState } from 'react'
 
 import { getPipedInstances } from '../actions/audio'
 
-const usePipedInstances = (serverAPI: ServerAPI) => {
+const usePipedInstances = () => {
   const [instances, setInstances] = useState<
     {
       name: string
@@ -17,7 +16,7 @@ const usePipedInstances = (serverAPI: ServerAPI) => {
     let ignore = false
     async function getData() {
       setInstancesLoading(true)
-      const instanceList = await getPipedInstances(serverAPI)
+      const instanceList = await getPipedInstances()
       if (ignore) {
         return
       }

@@ -1,10 +1,10 @@
 import {
   afterPatch,
-  ServerAPI,
   wrapReactType,
   findInReactTree,
   appDetailsClasses
-} from 'decky-frontend-lib'
+} from '@decky/ui'
+import { routerHook } from '@decky/api'
 import React, { ReactElement } from 'react'
 import ThemePlayer from '../components/themePlayer'
 import {
@@ -13,10 +13,9 @@ import {
 } from '../state/AudioLoaderCompatState'
 
 function patchLibraryApp(
-  serverAPI: ServerAPI,
   AudioLoaderCompatState: AudioLoaderCompatState
 ) {
-  return serverAPI.routerHook.addPatch(
+  return routerHook.addPatch(
     '/library/app/:appid',
     (props?: { path?: string; children?: ReactElement }) => {
       if (!props?.children?.props?.renderFunc) {
@@ -52,7 +51,7 @@ function patchLibraryApp(
                 <AudioLoaderCompatStateContextProvider
                   AudioLoaderCompatStateClass={AudioLoaderCompatState}
                 >
-                  <ThemePlayer serverAPI={serverAPI} />
+                  <ThemePlayer />
                 </AudioLoaderCompatStateContextProvider>
               )
 

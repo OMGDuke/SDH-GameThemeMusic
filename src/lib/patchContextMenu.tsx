@@ -9,7 +9,7 @@ import {
   MenuItem,
   Navigation,
   Patch
-} from 'decky-frontend-lib'
+} from '@decky/ui'
 import useTranslations from '../hooks/useTranslations'
 
 function ChangeMusicButton({ appId }: { appId: number }) {
