@@ -1,6 +1,5 @@
+import { call } from '@decky/api'
 import { useEffect, useState } from 'react'
-
-import { ServerAPI } from 'decky-frontend-lib'
 
 export type Settings = {
   defaultMuted: boolean
@@ -14,7 +13,7 @@ export const defaultSettings = {
   volume: 1
 }
 
-export const useSettings = (serverApi: ServerAPI) => {
+export const useSettings = () => {
   const [settings, setSettings] = useState<Settings>(defaultSettings)
 
   const [isLoading, setIsLoading] = useState(true)
@@ -22,12 +21,7 @@ export const useSettings = (serverApi: ServerAPI) => {
   useEffect(() => {
     const getData = async () => {
       setIsLoading(true)
-      const savedSettings = (
-        await serverApi.callPluginMethod('get_setting', {
-          key: 'settings',
-          default: settings
-        })
-      ).result as Settings
+      const savedSettings = await call<[string, Settings], Settings>('get_setting', 'settings', settings)
       setSettings(savedSettings)
       setIsLoading(false)
     }
@@ -40,10 +34,7 @@ export const useSettings = (serverApi: ServerAPI) => {
   ) {
     setSettings((oldSettings) => {
       const newSettings = { ...oldSettings, [key]: value }
-      serverApi.callPluginMethod('set_setting', {
-        key: 'settings',
-        value: newSettings
-      })
+      call<[string, Settings], Settings>('set_setting', 'settings', newSettings).catch(console.error)
       return newSettings
     })
   }

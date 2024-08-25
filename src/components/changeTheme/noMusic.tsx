@@ -1,4 +1,4 @@
-import { DialogButton, Focusable } from 'decky-frontend-lib'
+import { DialogButton, Focusable } from '@decky/ui'
 import React from 'react'
 import useTranslations from '../../hooks/useTranslations'
 

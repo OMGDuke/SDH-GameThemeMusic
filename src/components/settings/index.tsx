@@ -3,11 +3,10 @@ import {
   DropdownItem,
   PanelSection,
   PanelSectionRow,
-  ServerAPI,
   SingleDropdownOption,
   SliderField,
   ToggleField
-} from 'decky-frontend-lib'
+} from '@decky/ui'
 import React, { useMemo } from 'react'
 import { useSettings } from '../../hooks/useSettings'
 import useTranslations from '../../hooks/useTranslations'
@@ -15,22 +14,18 @@ import { FaVolumeMute, FaVolumeUp } from 'react-icons/fa'
 import { clearCache } from '../../cache/musicCache'
 import usePipedInstances from '../../hooks/usePipedInstances'
 
-type Props = {
-  serverAPI: ServerAPI
-}
-
-export default function Index({ serverAPI }: Props) {
+export default function Index() {
   const {
     settings,
     isLoading: settingsIsLoading,
     setDefaultMuted,
     setPipedInstance,
     setVolume
-  } = useSettings(serverAPI)
+  } = useSettings()
 
   const t = useTranslations()
 
-  const { instances, instancesLoading } = usePipedInstances(serverAPI)
+  const { instances, instancesLoading } = usePipedInstances()
 
   const instanceOptions = useMemo<SingleDropdownOption[]>(
     () =>

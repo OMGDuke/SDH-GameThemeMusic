@@ -1,5 +1,6 @@
 import React from 'react'
-import { definePlugin, ServerAPI, staticClasses } from 'decky-frontend-lib'
+import { definePlugin, staticClasses } from '@decky/ui'
+import { routerHook } from '@decky/api'
 
 import { GiMusicalNotes } from 'react-icons/gi'
 
@@ -12,17 +13,17 @@ import {
   AudioLoaderCompatStateContextProvider
 } from './state/AudioLoaderCompatState'
 
-export default definePlugin((serverAPI: ServerAPI) => {
+export default definePlugin(() => {
   const state: AudioLoaderCompatState = new AudioLoaderCompatState()
-  const libraryPatch = patchLibraryApp(serverAPI, state)
+  const libraryPatch = patchLibraryApp(state)
 
-  serverAPI.routerHook.addRoute(
+  routerHook.addRoute(
     '/gamethememusic/:appid',
     () => (
       <AudioLoaderCompatStateContextProvider
         AudioLoaderCompatStateClass={state}
       >
-        <ChangeTheme serverAPI={serverAPI} />
+        <ChangeTheme />
       </AudioLoaderCompatStateContextProvider>
     ),
     {
@@ -52,11 +53,11 @@ export default definePlugin((serverAPI: ServerAPI) => {
   return {
     title: <div className={staticClasses.Title}>Game Theme Music</div>,
     icon: <GiMusicalNotes />,
-    content: <Settings serverAPI={serverAPI} />,
+    content: <Settings />,
     onDismount() {
       AppStateRegistrar.unregister()
-      serverAPI.routerHook.removePatch('/library/app/:appid', libraryPatch)
-      serverAPI.routerHook.removeRoute('/gamethememusic/:appid')
+      routerHook.removePatch('/library/app/:appid', libraryPatch)
+      routerHook.removeRoute('/gamethememusic/:appid')
       patchedMenu?.unpatch()
     }
   }

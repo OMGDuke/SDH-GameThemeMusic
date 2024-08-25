@@ -1,4 +1,4 @@
-import { ServerAPI, useParams } from 'decky-frontend-lib'
+import { useParams } from '@decky/ui'
 import React, { ReactElement, useEffect } from 'react'
 
 import useThemeMusic from '../../hooks/useThemeMusic'
@@ -6,14 +6,10 @@ import { useSettings } from '../../hooks/useSettings'
 import { getCache } from '../../cache/musicCache'
 import useAudioPlayer from '../../hooks/useAudioPlayer'
 
-export default function ThemePlayer({
-  serverAPI
-}: {
-  serverAPI: ServerAPI
-}): ReactElement {
-  const { settings, isLoading: settingsIsLoading } = useSettings(serverAPI)
+export default function ThemePlayer(): ReactElement {
+  const { settings, isLoading: settingsIsLoading } = useSettings()
   const { appid } = useParams<{ appid: string }>()
-  const { audio } = useThemeMusic(serverAPI, parseInt(appid))
+  const { audio } = useThemeMusic(parseInt(appid))
   const audioPlayer = useAudioPlayer(audio.audioUrl)
 
   useEffect(() => {

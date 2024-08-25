@@ -1,10 +1,11 @@
 import {
   afterPatch,
-  ServerAPI,
   wrapReactType,
   findInReactTree,
-  appDetailsClasses
-} from 'decky-frontend-lib'
+  appDetailsClasses,
+  createReactTreePatcher
+} from '@decky/ui'
+import { routerHook } from '@decky/api'
 import React, { ReactElement } from 'react'
 import ThemePlayer from '../components/themePlayer'
 import {
@@ -13,56 +14,43 @@ import {
 } from '../state/AudioLoaderCompatState'
 
 function patchLibraryApp(
-  serverAPI: ServerAPI,
   AudioLoaderCompatState: AudioLoaderCompatState
 ) {
-  return serverAPI.routerHook.addPatch(
+  return routerHook.addPatch(
     '/library/app/:appid',
-    (props?: { path?: string; children?: ReactElement }) => {
-      if (!props?.children?.props?.renderFunc) {
-        return props
-      }
-
-      afterPatch(
-        props.children.props,
-        'renderFunc',
-        (_: Record<string, unknown>[], ret?: ReactElement) => {
-          if (!ret?.props?.children?.type?.type) {
+    (tree: any) => {
+      const routeProps = findInReactTree(tree, (x: any) => x?.renderFunc);
+      if (routeProps) {
+        const patchHandler = createReactTreePatcher([
+          (tree: any) => findInReactTree(tree, (x: any) => x?.props?.children?.props?.overview)?.props?.children
+        ], (_: Array<Record<string, unknown>>, ret?: ReactElement) => {
+          const container = findInReactTree(
+            ret,
+            (x: ReactElement) =>
+              Array.isArray(x?.props?.children) &&
+              x?.props?.className?.includes(
+                appDetailsClasses.InnerContainer
+              )
+          )
+          if (typeof container !== 'object') {
             return ret
           }
 
-          wrapReactType(ret.props.children)
-          afterPatch(
-            ret.props.children.type,
-            'type',
-            (_2: Record<string, unknown>[], ret2?: ReactElement) => {
-              const container = findInReactTree(
-                ret2,
-                (x: ReactElement) =>
-                  Array.isArray(x?.props?.children) &&
-                  x?.props?.className?.includes(
-                    appDetailsClasses.InnerContainer
-                  )
-              )
-              if (typeof container !== 'object') {
-                return ret2
-              }
-
-              container.props.children.push(
-                <AudioLoaderCompatStateContextProvider
-                  AudioLoaderCompatStateClass={AudioLoaderCompatState}
-                >
-                  <ThemePlayer serverAPI={serverAPI} />
-                </AudioLoaderCompatStateContextProvider>
-              )
-
-              return ret2
-            }
+          container.props.children.push(
+            <AudioLoaderCompatStateContextProvider
+              AudioLoaderCompatStateClass={AudioLoaderCompatState}
+            >
+              <ThemePlayer />
+            </AudioLoaderCompatStateContextProvider>
           )
+
           return ret
-        }
-      )
-      return props
+        });
+
+        afterPatch(routeProps, "renderFunc", patchHandler);
+      }
+
+      return tree;
     }
   )
 }
