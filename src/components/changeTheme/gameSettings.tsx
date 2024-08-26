@@ -38,10 +38,7 @@ export default function GameSettings() {
         setThemeVolume(settings.volume)
       }
       if (cache?.videoId?.length) {
-        const newAudio = await getAudioUrlFromVideoId({
-          title: '',
-          id: cache?.videoId
-        })
+        const newAudio = await getAudioUrlFromVideoId(cache?.videoId)
         setCurrentAudio(newAudio)
       } else {
         const newAudio = await getAudio(appName as string)

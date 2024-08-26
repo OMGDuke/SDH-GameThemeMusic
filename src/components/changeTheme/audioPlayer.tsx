@@ -33,7 +33,7 @@ export default function AudioPlayer({
   useEffect(() => {
     async function getData() {
       setLoading(true)
-      const res = await getAudioUrlFromVideoId(video)
+      const res = await getAudioUrlFromVideoId(video?.id)
       setAudio(res)
       setLoading(false)
     }

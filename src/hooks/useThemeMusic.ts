@@ -21,10 +21,7 @@ const useThemeMusic = (appId: number) => {
       if (cache?.videoId?.length == 0) {
         return setAudio({ videoId: '', audioUrl: '' })
       } else if (cache?.videoId?.length) {
-        const newAudio = await getAudioUrlFromVideoId({
-          title: '',
-          id: cache.videoId
-        })
+        const newAudio = await getAudioUrlFromVideoId(cache.videoId)
         if (newAudio?.length) {
           return setAudio({ videoId: cache.videoId, audioUrl: newAudio })
         }

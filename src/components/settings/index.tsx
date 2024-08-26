@@ -12,20 +12,21 @@ import { useSettings } from '../../hooks/useSettings'
 import useTranslations from '../../hooks/useTranslations'
 import { FaVolumeMute, FaVolumeUp } from 'react-icons/fa'
 import { clearCache } from '../../cache/musicCache'
-import usePipedInstances from '../../hooks/usePipedInstances'
+import useInvidiousInstances from '../../hooks/useInvidiousInstances'
 
 export default function Index() {
   const {
     settings,
     isLoading: settingsIsLoading,
     setDefaultMuted,
-    setPipedInstance,
+    setInvidiousInstance,
     setVolume
   } = useSettings()
 
   const t = useTranslations()
 
-  const { instances, instancesLoading } = usePipedInstances()
+  const { instances, instancesLoading } = useInvidiousInstances()
+  console.log(instances)
 
   const instanceOptions = useMemo<SingleDropdownOption[]>(
     () =>
@@ -70,15 +71,15 @@ export default function Index() {
             disabled={
               instancesLoading || !instanceOptions?.length || settingsIsLoading
             }
-            label={t('pipedInstance')}
-            description={t('pipedInstanceDescription')}
-            menuLabel={t('pipedInstance')}
+            label={t('invidiousInstance')}
+            description={t('invidiousInstanceDescription')}
+            menuLabel={t('invidiousInstance')}
             rgOptions={instanceOptions}
             selectedOption={
-              instanceOptions.find((o) => o.data === settings.pipedInstance)
+              instanceOptions.find((o) => o.data === settings.invidiousInstance)
                 ?.data
             }
-            onChange={(newVal) => setPipedInstance(newVal.data)}
+            onChange={(newVal) => setInvidiousInstance(newVal.data)}
           />
         </PanelSectionRow>
       </PanelSection>
