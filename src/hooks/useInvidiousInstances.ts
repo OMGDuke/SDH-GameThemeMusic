@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 
-import { getPipedInstances } from '../actions/audio'
+import { getInvidiousInstances } from '../actions/audio'
 
-const usePipedInstances = () => {
+const useInvidiousInstances = () => {
   const [instances, setInstances] = useState<
     {
       name: string
@@ -16,7 +16,7 @@ const usePipedInstances = () => {
     let ignore = false
     async function getData() {
       setInstancesLoading(true)
-      const instanceList = await getPipedInstances()
+      const instanceList = await getInvidiousInstances()
       if (ignore) {
         return
       }
@@ -35,4 +35,4 @@ const usePipedInstances = () => {
   }
 }
 
-export default usePipedInstances
+export default useInvidiousInstances

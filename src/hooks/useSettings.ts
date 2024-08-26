@@ -3,13 +3,13 @@ import { useEffect, useState } from 'react'
 
 export type Settings = {
   defaultMuted: boolean
-  pipedInstance: string
+  invidiousInstance: string
   volume: number
 }
 
 export const defaultSettings = {
   defaultMuted: false,
-  pipedInstance: 'https://pipedapi.kavin.rocks',
+  invidiousInstance: 'https://inv.tux.pizza',
   volume: 1
 }
 
@@ -21,7 +21,11 @@ export const useSettings = () => {
   useEffect(() => {
     const getData = async () => {
       setIsLoading(true)
-      const savedSettings = await call<[string, Settings], Settings>('get_setting', 'settings', settings)
+      const savedSettings = await call<[string, Settings], Settings>(
+        'get_setting',
+        'settings',
+        settings
+      )
       setSettings(savedSettings)
       setIsLoading(false)
     }
@@ -34,7 +38,11 @@ export const useSettings = () => {
   ) {
     setSettings((oldSettings) => {
       const newSettings = { ...oldSettings, [key]: value }
-      call<[string, Settings], Settings>('set_setting', 'settings', newSettings).catch(console.error)
+      call<[string, Settings], Settings>(
+        'set_setting',
+        'settings',
+        newSettings
+      ).catch(console.error)
       return newSettings
     })
   }
@@ -42,12 +50,18 @@ export const useSettings = () => {
   function setDefaultMuted(value: Settings['defaultMuted']) {
     updateSettings('defaultMuted', value)
   }
-  function setPipedInstance(value: Settings['pipedInstance']) {
-    updateSettings('pipedInstance', value)
+  function setInvidiousInstance(value: Settings['invidiousInstance']) {
+    updateSettings('invidiousInstance', value)
   }
   function setVolume(value: Settings['volume']) {
     updateSettings('volume', value)
   }
 
-  return { settings, setDefaultMuted, setPipedInstance, setVolume, isLoading }
+  return {
+    settings,
+    setDefaultMuted,
+    setInvidiousInstance,
+    setVolume,
+    isLoading
+  }
 }

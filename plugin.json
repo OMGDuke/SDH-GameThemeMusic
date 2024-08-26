@@ -1,7 +1,7 @@
 {
   "name": "Game Theme Music",
   "author": "OMGDuke",
-  "flags": [],
+  "flags": ["debug"],
   "api_version": 2,
   "publish": {
     "tags": ["audio"],
