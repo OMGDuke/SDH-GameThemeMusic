@@ -1,6 +1,6 @@
 {
     "about": "Over",
-    "aboutDescription": "Speel thema nummers af op je spel pagina's",
+    "aboutDescription": "Speel themanummers af op je spelpagina's",
     "aboutLabel": "Over Game Thema Muziek",
     "changeThemeMusic": "Themamuziek wijzigen",
     "clear": "Wissen",
@@ -13,16 +13,16 @@
     "noMusicLabel": "Geen muziek",
     "overrides": "Overschrijvingen",
     "invidiousInstance": "Instantie",
-    "invidiousInstanceDescription": "",
+    "invidiousInstanceDescription": "Welke instantie wil je gebruiken om audio te zoeken?",
     "play": "Afspelen",
     "resetVolume": "Resetten",
     "search": "Zoeken",
     "select": "Selecteer",
     "selected": "Geselecteerd",
-    "settings": "Settings",
-    "stop": "Stop",
-    "supportDescription": "Visit the Steam Deck Homebrew Discord deckbrew.xyz/discord",
-    "supportLabel": "Support",
-    "volume": "Music Volume",
-    "volumeDescription": "Adjust music volume"
+    "settings": "Instellingen",
+    "stop": "Stoppen",
+    "supportDescription": "Bezoek het Steam Deck Homebrew Discord deckbrew.xyz/discord",
+    "supportLabel": "Ondersteuning",
+    "volume": "Muziek Volume",
+    "volumeDescription": "Muziekvolume aanpassen"
 }
