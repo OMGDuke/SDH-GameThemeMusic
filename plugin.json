@@ -2,7 +2,7 @@
   "name": "Game Theme Music",
   "author": "OMGDuke",
   "flags": [],
-  "api_version": 2,
+  "api_version": 1,
   "publish": {
     "tags": ["audio"],
     "description": "Play theme songs on your game pages",
