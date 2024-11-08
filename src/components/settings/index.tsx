@@ -2,9 +2,13 @@ import {
   ButtonItem,
   ConfirmModal,
   DropdownItem,
+  Menu,
+  MenuItem,
   PanelSection,
   PanelSectionRow,
+  showContextMenu,
   showModal,
+  SimpleModal,
   SingleDropdownOption,
   SliderField,
   ToggleField
@@ -12,9 +16,10 @@ import {
 import React, { useMemo } from 'react'
 import { useSettings } from '../../hooks/useSettings'
 import useTranslations from '../../hooks/useTranslations'
-import { FaDownload, FaVolumeMute, FaVolumeUp, FaYoutube } from 'react-icons/fa'
-import { clearCache, clearDownloads } from '../../cache/musicCache'
+import { FaDownload, FaUndo, FaSave, FaVolumeMute, FaVolumeUp, FaYoutube } from 'react-icons/fa'
+import { clearCache, clearDownloads, exportCache, importCache, listCacheBackups } from '../../cache/musicCache'
 import useInvidiousInstances from '../../hooks/useInvidiousInstances'
+import { toaster } from '@decky/api'
 
 export default function Index() {
   const {
@@ -45,6 +50,7 @@ export default function Index() {
     showModal(
       <ConfirmModal
         strTitle={t('deleteOverridesConfirm')}
+        strDescription={t('deleteOverridesDescription')}
         onOK={clearCache}
       />
     );
@@ -57,6 +63,19 @@ export default function Index() {
         onOK={clearDownloads}
       />
     );
+  }
+
+  function restoreCache(backup: string) {
+    showModal(
+      <ConfirmModal
+        strTitle={t('restoreOverridesConfirm')}
+        strDescription={t('restoreOverridesConfirmDetails')}
+        onOK={async () => {
+          await importCache(backup)
+          toaster.toast({ title: t('restoreSuccessful'), body: t('restoreSuccessfulDetails'), icon: <FaUndo />, duration: 1500 })
+        }}
+      />
+    )
   }
 
   return (
@@ -150,7 +169,43 @@ export default function Index() {
             {t('deleteOverrides')}
           </ButtonItem>
         </PanelSectionRow>
+        <PanelSectionRow>
+          <ButtonItem
+            label={t('backupOverridesLabel')}
+            bottomSeparator="none"
+            layout="below"
+            onClick={async () => {
+              await exportCache()
+              toaster.toast({ title: t('backupSuccessful'), body: t('backupSuccessfulDetails'), icon: <FaSave />, duration: 1500 })
+            }}
+          >
+            {t('backupOverrides')}
+          </ButtonItem>
+        </PanelSectionRow>
+        <PanelSectionRow>
+          <ButtonItem
+            label={t('restoreOverridesLabel')}
+            bottomSeparator="none"
+            layout="below"
+            onClick={async () => {
+              const backups = await listCacheBackups();
+              showContextMenu(
+                <Menu
+                  label={t('restoreOverridesLabel')}
+                >
+                  {backups.map((backup) => (
+                    <MenuItem tone='positive' onClick={() => restoreCache(backup)}>
+                      {backup}
+                    </MenuItem>
+                  ))}
+                </Menu>
+              )
+            }}
+          >
+            {t('restoreOverrides')}
+          </ButtonItem>
+        </PanelSectionRow>
       </PanelSection>
-    </div>
+    </div >
   )
 }

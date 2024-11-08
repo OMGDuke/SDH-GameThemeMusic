@@ -1,4 +1,6 @@
 import os
+
+import datetime
 import base64
 import glob
 import subprocess
@@ -11,6 +13,7 @@ from settings import SettingsManager
 class Plugin:
     yt_process: Optional[subprocess.Popen] = None
     music_path = f"{decky_plugin.DECKY_PLUGIN_RUNTIME_DIR}/music"
+    cache_path = f"{decky_plugin.DECKY_PLUGIN_RUNTIME_DIR}/cache"
 
     async def _main(self):
         self.settings = SettingsManager(
@@ -107,5 +110,26 @@ class Plugin:
 
     async def clear_downloads(self):
         for file in glob.glob(f"{self.music_path}/*"):
+            if os.path.isfile(file):
+                os.remove(file)
+
+    async def export_cache(self, cache: dict):
+        os.makedirs(self.cache_path, exist_ok=True)
+        filename = f"backup-{datetime.datetime.now().strftime('%Y-%m-%d %H:%M')}.json"
+        with open(f"{self.cache_path}/{filename}", "w") as file:
+            json.dump(cache, file)
+
+    async def list_cache_backups(self):
+        return [
+            file.split("/")[-1].rsplit(".", 1)[0]
+            for file in glob.glob(f"{self.cache_path}/*")
+        ]
+
+    async def import_cache(self, name: str):
+        with open(f"{self.cache_path}/{name}.json", "r") as file:
+            return json.load(file)
+
+    async def clear_cache(self):
+        for file in glob.glob(f"{self.cache_path}/*"):
             if os.path.isfile(file):
                 os.remove(file)
