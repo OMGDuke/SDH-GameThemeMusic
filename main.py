@@ -1,4 +1,5 @@
 import os
+import base64
 import glob
 import subprocess
 import json
@@ -36,6 +37,8 @@ class Plugin:
                 "-j",
                 "-f",
                 "bestaudio",
+                "--match-filters",
+                f"duration<?{20*60}",  # 20 minutes is too long.
             ],
             stdout=subprocess.PIPE,
         )
@@ -59,7 +62,7 @@ class Plugin:
             "thumbnail": entry["thumbnail"],
         }
 
-    async def single_yt_result(self, id: str):
+    async def single_yt_url(self, id: str):
         local_matches = [
             x for x in glob.glob(f"{self.music_path}/{id}.*") if os.path.isfile(x)
         ]
@@ -67,8 +70,12 @@ class Plugin:
             assert (
                 len(local_matches) == 1
             ), "More than one downloaded audio with same ID found."
-            # The audio has already been downloaded, we can just return it.
-            return local_matches[0]
+            # The audio has already been downloaded, so we can just use that one.
+            # However, we cannot use local paths in the <audio> elements, so we'll
+            # convert this to a base64-encoded data URL first.
+            extension = local_matches[0].split(".")[-1]
+            with open(local_matches[0], "rb") as file:
+                return f"data:audio/{extension};base64,{base64.b64encode(file.read()).decode()}"
         result = subprocess.run(
             [
                 f"{decky_plugin.DECKY_PLUGIN_DIR}/yt-dlp",
@@ -97,3 +104,8 @@ class Plugin:
                 self.music_path,
             ],
         )
+
+    async def clear_downloads(self):
+        for file in glob.glob(f"{self.music_path}/*"):
+            if os.path.isfile(file):
+                os.remove(file)

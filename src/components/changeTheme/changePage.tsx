@@ -1,10 +1,12 @@
 import {
   DialogButton,
   Focusable,
+  ModalRoot,
   PanelSection,
   PanelSectionRow,
   SteamSpinner,
   TextField,
+  showModal,
   useParams
 } from '@decky/ui'
 import React, { useEffect, useState } from 'react'
@@ -14,9 +16,12 @@ import { getCache, updateCache } from '../../cache/musicCache'
 import useTranslations from '../../hooks/useTranslations'
 import { YouTubeVideoPreview } from '../../../types/YouTube'
 import NoMusic from './noMusic'
+import { getResolver } from '../../actions/audio'
 
 export default function ChangePage({
   customSearch,
+  currentSearch,
+  setInitialSearch,
   handlePlay,
   loading,
   videos
@@ -24,7 +29,9 @@ export default function ChangePage({
   videos: (YouTubeVideoPreview & { isPlaying: boolean })[]
   loading: boolean
   handlePlay: (idx: number, startPlaying: boolean) => void
-  customSearch: (term: string | undefined) => void
+  customSearch: (term: string) => void,
+  setInitialSearch: () => string,
+  currentSearch: string
 }) {
   const t = useTranslations()
   const { settings } = useSettings()
@@ -32,7 +39,7 @@ export default function ChangePage({
   const appDetails = appStore.GetAppOverviewByGameID(parseInt(appid))
   const appName = appDetails?.display_name?.replace(/(™|®|©)/g, '')
   const [selected, setSelected] = useState<string | undefined>()
-  const [searchTerm, setSearchTerm] = useState(appName || '')
+  const [searchTerm, setSearchTerm] = useState(currentSearch)
 
   useEffect(() => {
     async function getData() {
@@ -42,11 +49,24 @@ export default function ChangePage({
     getData()
   }, [appid])
 
-  function selectNewAudio(audio: {
+  async function selectNewAudio(audio: {
     title: string
     videoId: string
     audioUrl: string
   }) {
+    if (settings.downloadAudio) {
+      const success = await getResolver(settings.useYtDlp).downloadAudio({ 'id': audio.videoId, 'url': audio.audioUrl });
+      if (!success) {
+        showModal(
+          <ModalRoot>
+            {t('downloadFailedDetail')}
+          </ModalRoot>,
+          undefined,
+          { strTitle: t('downloadFailed') }
+        )
+        return;
+      }
+    }
     setSelected(audio.videoId)
     updateCache(parseInt(appid), { videoId: audio.videoId })
   }
@@ -74,27 +94,25 @@ export default function ChangePage({
               }}
             >
               <TextField
-                disabled={loading}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 value={searchTerm}
               />
             </form>
             <DialogButton
-              disabled={loading || !searchTerm?.length}
+              disabled={!searchTerm?.length}
               focusable={!loading && Boolean(searchTerm?.length)}
               onClick={() => customSearch(searchTerm)}
             >
               {t('search')}
             </DialogButton>
             <DialogButton
-              disabled={loading || !searchTerm?.length}
+              disabled={!searchTerm?.length}
               focusable={!loading && Boolean(searchTerm?.length)}
               onClick={() => {
-                setSearchTerm('')
-                customSearch(undefined)
+                setSearchTerm(setInitialSearch())
               }}
             >
-              {t('clear')}
+              {t('reset')}
             </DialogButton>
           </Focusable>
         </PanelSectionRow>

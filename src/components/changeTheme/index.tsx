@@ -15,40 +15,38 @@ export default function ChangeTheme() {
   const { settings, isLoading: settingsLoading } = useSettings()
   const { appid } = useParams<{ appid: string }>()
   const appDetails = appStore.GetAppOverviewByGameID(parseInt(appid))
-  const appName = appDetails?.display_name
+  const appName = appDetails?.display_name?.replace(/(™|®|©)/g, '')
 
   const [videos, setVideos] = useState<
     (YouTubeVideoPreview & { isPlaying: boolean })[]
   >([])
   const [loading, setLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState<string>()
-
+  const initialSearch = appName?.concat(" Theme Music") ?? ''
+  const [searchTerm, setSearchTerm] = useState(initialSearch)
   useEffect(() => {
     let ignore = false
     async function getData() {
       setLoading(true)
+      setVideos([])
       const resolver = getResolver(settings.useYtDlp);
       const res = resolver.getYouTubeSearchResults(
-        searchTerm?.length ? searchTerm : appName,
-        Boolean(searchTerm?.length)
+        searchTerm
       )
-      if (ignore) {
-        return
-      }
-      let videos: YouTubeVideoPreview[] = []
       for await (const video of res) {
-        videos.push(video)
-        setVideos(videos.map((v) => ({ ...v, isPlaying: false })))
+        if (ignore) {
+          return
+        }
+        setVideos((oldVideos) => [...oldVideos, { isPlaying: false, ...video }])
       }
       setLoading(false)
     }
-    if (appName && !settingsLoading) {
+    if (searchTerm.length > 0 && !settingsLoading) {
       getData()
     }
     return () => {
       ignore = true
     }
-  }, [searchTerm, appName, settingsLoading])
+  }, [searchTerm, settingsLoading])
 
   function handlePlay(index: number, startPlay: boolean) {
     setVideos((oldVideos) => {
@@ -58,6 +56,11 @@ export default function ChangeTheme() {
       }))
       return newVideos
     })
+  }
+
+  function setInitialSearch() {
+    setSearchTerm(initialSearch)
+    return initialSearch
   }
 
   return (
@@ -80,6 +83,8 @@ export default function ChangeTheme() {
                 loading={loading}
                 handlePlay={handlePlay}
                 customSearch={setSearchTerm}
+                currentSearch={searchTerm}
+                setInitialSearch={setInitialSearch}
               />
             ),
             id: 'change-music-tab'

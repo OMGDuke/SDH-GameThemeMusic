@@ -1,3 +1,4 @@
+import { call } from '@decky/api'
 import localforage from 'localforage'
 
 const STORAGE_KEY = 'game-theme-music-cache'
@@ -35,4 +36,8 @@ export async function getCache(
 ): Promise<GameThemeMusicCache | null> {
   const cache = await localforage.getItem<GameThemeMusicCache>(appId.toString())
   return cache
+}
+
+export async function clearDownloads() {
+  await call<[]>('clear_downloads')
 }

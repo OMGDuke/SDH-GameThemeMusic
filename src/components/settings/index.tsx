@@ -1,8 +1,10 @@
 import {
   ButtonItem,
+  ConfirmModal,
   DropdownItem,
   PanelSection,
   PanelSectionRow,
+  showModal,
   SingleDropdownOption,
   SliderField,
   ToggleField
@@ -11,7 +13,7 @@ import React, { useMemo } from 'react'
 import { useSettings } from '../../hooks/useSettings'
 import useTranslations from '../../hooks/useTranslations'
 import { FaDownload, FaVolumeMute, FaVolumeUp, FaYoutube } from 'react-icons/fa'
-import { clearCache } from '../../cache/musicCache'
+import { clearCache, clearDownloads } from '../../cache/musicCache'
 import useInvidiousInstances from '../../hooks/useInvidiousInstances'
 
 export default function Index() {
@@ -20,6 +22,7 @@ export default function Index() {
     isLoading: settingsIsLoading,
     setDefaultMuted,
     setUseYtDlp,
+    setDownloadAudio,
     setInvidiousInstance,
     setVolume
   } = useSettings()
@@ -37,6 +40,24 @@ export default function Index() {
       })),
     [instances]
   )
+
+  const confirmClearCache = () => {
+    showModal(
+      <ConfirmModal
+        strTitle={t('deleteOverridesConfirm')}
+        onOK={clearCache}
+      />
+    );
+  }
+
+  const confirmClearDownloads = () => {
+    showModal(
+      <ConfirmModal
+        strTitle={t('deleteDownloadsConfirm')}
+        onOK={clearDownloads}
+      />
+    );
+  }
 
   return (
     <div>
@@ -93,6 +114,29 @@ export default function Index() {
             }
             onChange={(newVal) => setInvidiousInstance(newVal.data)}
           />
+        </PanelSectionRow>}
+        {settings.useYtDlp && <PanelSectionRow>
+          <ToggleField
+            icon={<FaDownload />}
+            checked={settings.downloadAudio}
+            label={t('downloadAudio')}
+            description={t('downloadAudioDescription')}
+            onChange={(newVal: boolean) => {
+              setDownloadAudio(newVal)
+            }}
+          >
+          </ToggleField>
+        </PanelSectionRow>}
+        <PanelSectionRow>
+          <ButtonItem
+            label={t('deleteDownloadsLabel')}
+            description={t('deleteDownloadsDescription')}
+            bottomSeparator="none"
+            layout="below"
+            onClick={() => confirmClearDownloads()}
+          >
+            {t('deleteDownloads')}
+          </ButtonItem>
         </PanelSectionRow>
       </PanelSection>
       <PanelSection title={t('overrides')}>
@@ -101,7 +145,7 @@ export default function Index() {
             label={t('deleteOverridesLabel')}
             bottomSeparator="none"
             layout="below"
-            onClick={() => clearCache()}
+            onClick={() => confirmClearCache()}
           >
             {t('deleteOverrides')}
           </ButtonItem>

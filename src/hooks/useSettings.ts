@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 export type Settings = {
   defaultMuted: boolean
   useYtDlp: boolean
+  downloadAudio: boolean
   invidiousInstance: string
   volume: number
 }
@@ -11,6 +12,7 @@ export type Settings = {
 export const defaultSettings = {
   defaultMuted: false,
   useYtDlp: false,
+  downloadAudio: false,
   invidiousInstance: 'https://inv.tux.pizza',
   volume: 1
 }
@@ -54,6 +56,11 @@ export const useSettings = () => {
   }
   function setUseYtDlp(value: Settings['useYtDlp']) {
     updateSettings('useYtDlp', value)
+    // Currently, downloads don't work with Invidious, so they can only be enabled iff yt-dlp is enabled.
+    updateSettings('downloadAudio', value)
+  }
+  function setDownloadAudio(value: Settings['downloadAudio']) {
+    updateSettings('downloadAudio', value)
   }
   function setInvidiousInstance(value: Settings['invidiousInstance']) {
     updateSettings('invidiousInstance', value)
@@ -66,6 +73,7 @@ export const useSettings = () => {
     settings,
     setDefaultMuted,
     setUseYtDlp,
+    setDownloadAudio,
     setInvidiousInstance,
     setVolume,
     isLoading

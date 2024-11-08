@@ -3,13 +3,14 @@ import { YouTubeVideo, YouTubeInitialData, Audio, YouTubeVideoPreview } from '..
 import { Settings, defaultSettings } from '../hooks/useSettings'
 
 abstract class AudioResolver {
-  abstract getYouTubeSearchResults(appName: string, customSearch?: boolean): AsyncIterable<YouTubeVideoPreview>;
+  abstract getYouTubeSearchResults(searchTerm: string): AsyncIterable<YouTubeVideoPreview>;
   abstract getAudioUrlFromVideo(video: YouTubeVideo): Promise<string | undefined>;
+  abstract downloadAudio(video: YouTubeVideo): Promise<boolean>;
 
   async getAudio(
     appName: string
   ): Promise<{ videoId: string; audioUrl: string } | undefined> {
-    const videos = this.getYouTubeSearchResults(appName)
+    const videos = this.getYouTubeSearchResults(appName + " Theme Music")
     for await (const video of videos) {
       const audioUrl = await this.getAudioUrlFromVideo(video)
       if (audioUrl?.length) {
@@ -31,14 +32,13 @@ class InvidiousAudioResolver extends AudioResolver {
   }
 
   async* getYouTubeSearchResults(
-    appName: string,
-    customSearch?: boolean
+    searchTerm: string,
   ): AsyncIterable<YouTubeVideoPreview> {
     try {
-      const searchTerm = `${encodeURIComponent(appName)}${customSearch ? '' : '%20Theme%20Music'}`
+      const encodedSearchTerm = `${encodeURIComponent(searchTerm)}`
       const endpoint = await this.getEndpoint()
       const res = await fetch(
-        `${endpoint}/api/v1/search?type=video&page=1&q=${searchTerm}`
+        `${endpoint}/api/v1/search?type=video&page=1&q=${encodedSearchTerm}`
       )
       if (res.status === 200) {
         const results: YouTubeInitialData = await res.json()
@@ -85,15 +85,17 @@ class InvidiousAudioResolver extends AudioResolver {
     }
     return undefined
   }
+
+  async downloadAudio(_: YouTubeVideo): Promise<boolean> {
+    throw new Error('Method not implemented for Invidious.')
+  }
 }
 
 class YtDlpAudioResolver extends AudioResolver {
   async* getYouTubeSearchResults(
-    appName: string,
-    customSearch?: boolean
+    searchTerm: string,
   ): AsyncIterable<YouTubeVideoPreview> {
     try {
-      const searchTerm = `${encodeURIComponent(appName)}${customSearch ? '' : ' Theme Music'}`
       await call<[string]>('search_yt', searchTerm)
       let result = await call<[], YouTubeVideoPreview | null>('next_yt_result')
       while (result) {
@@ -115,6 +117,16 @@ class YtDlpAudioResolver extends AudioResolver {
       // This may return a local filesystem URL if the file has been downloaded before.
       const result = await call<[string], string | null>('single_yt_url', video.id)
       return result || undefined;
+    }
+  }
+
+  async downloadAudio(video: YouTubeVideo): Promise<boolean> {
+    try {
+      await call<[string]>('download_yt_audio', video.id)
+      return true;
+    } catch (e) {
+      console.error(e);
+      return false;
     }
   }
 }
