@@ -1,11 +1,12 @@
 import { DialogButton, Focusable } from '@decky/ui'
 import React, { useEffect, useState } from 'react'
 import useTranslations from '../../hooks/useTranslations'
-import { getAudioUrlFromVideoId } from '../../actions/audio'
-import YouTubeVideo from '../../../types/YouTube'
+import { getResolver } from '../../actions/audio'
+import { YouTubeVideo, YouTubeVideoPreview } from '../../../types/YouTube'
 import { FaCheck } from 'react-icons/fa'
 import Spinner from '../spinner'
 import useAudioPlayer from '../../hooks/useAudioPlayer'
+import { useSettings } from '../../hooks/useSettings'
 
 export default function AudioPlayer({
   handlePlay,
@@ -14,7 +15,7 @@ export default function AudioPlayer({
   video,
   volume
 }: {
-  video: YouTubeVideo & { isPlaying: boolean }
+  video: YouTubeVideoPreview & { isPlaying: boolean }
   volume: number
   handlePlay: (startPlaying: boolean) => void
   selected: boolean
@@ -27,20 +28,22 @@ export default function AudioPlayer({
   const t = useTranslations()
   const [loading, setLoading] = useState(true)
   const [audioUrl, setAudio] = useState<string | undefined>()
+  const { settings, isLoading: settingsLoading } = useSettings()
 
   const audioPlayer = useAudioPlayer(audioUrl)
 
   useEffect(() => {
     async function getData() {
+      const resolver = getResolver(settings.useYtDlp);
       setLoading(true)
-      const res = await getAudioUrlFromVideoId(video?.id)
+      const res = await resolver.getAudioUrlFromVideo(video)
       setAudio(res)
       setLoading(false)
     }
-    if (video.id.length) {
+    if (video.id.length && !settingsLoading) {
       getData()
     }
-  }, [video.id])
+  }, [video.id, settingsLoading])
 
   useEffect(() => {
     if (audioPlayer.isReady) {

@@ -12,7 +12,7 @@ import { useSettings } from '../../hooks/useSettings'
 import AudioPlayer from './audioPlayer'
 import { getCache, updateCache } from '../../cache/musicCache'
 import useTranslations from '../../hooks/useTranslations'
-import YouTubeVideo from '../../../types/YouTube'
+import { YouTubeVideoPreview } from '../../../types/YouTube'
 import NoMusic from './noMusic'
 
 export default function ChangePage({
@@ -21,7 +21,7 @@ export default function ChangePage({
   loading,
   videos
 }: {
-  videos: (YouTubeVideo & { isPlaying: boolean })[]
+  videos: (YouTubeVideoPreview & { isPlaying: boolean })[]
   loading: boolean
   handlePlay: (idx: number, startPlaying: boolean) => void
   customSearch: (term: string | undefined) => void
@@ -99,7 +99,7 @@ export default function ChangePage({
           </Focusable>
         </PanelSectionRow>
       </PanelSection>
-      {loading ? (
+      {loading && videos?.length === 0 ? (
         <SteamSpinner />
       ) : (
         <>
@@ -128,6 +128,7 @@ export default function ChangePage({
                 selectNewAudio={selectNewAudio}
               />
             ))}
+            {loading && <SteamSpinner />}
           </Focusable>
         </>
       )}

@@ -3,12 +3,14 @@ import { useEffect, useState } from 'react'
 
 export type Settings = {
   defaultMuted: boolean
+  useYtDlp: boolean
   invidiousInstance: string
   volume: number
 }
 
 export const defaultSettings = {
   defaultMuted: false,
+  useYtDlp: false,
   invidiousInstance: 'https://inv.tux.pizza',
   volume: 1
 }
@@ -50,6 +52,9 @@ export const useSettings = () => {
   function setDefaultMuted(value: Settings['defaultMuted']) {
     updateSettings('defaultMuted', value)
   }
+  function setUseYtDlp(value: Settings['useYtDlp']) {
+    updateSettings('useYtDlp', value)
+  }
   function setInvidiousInstance(value: Settings['invidiousInstance']) {
     updateSettings('invidiousInstance', value)
   }
@@ -60,6 +65,7 @@ export const useSettings = () => {
   return {
     settings,
     setDefaultMuted,
+    setUseYtDlp,
     setInvidiousInstance,
     setVolume,
     isLoading

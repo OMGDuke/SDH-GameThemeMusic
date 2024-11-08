@@ -10,7 +10,7 @@ import {
 import React, { useMemo } from 'react'
 import { useSettings } from '../../hooks/useSettings'
 import useTranslations from '../../hooks/useTranslations'
-import { FaVolumeMute, FaVolumeUp } from 'react-icons/fa'
+import { FaDownload, FaVolumeMute, FaVolumeUp, FaYoutube } from 'react-icons/fa'
 import { clearCache } from '../../cache/musicCache'
 import useInvidiousInstances from '../../hooks/useInvidiousInstances'
 
@@ -19,6 +19,7 @@ export default function Index() {
     settings,
     isLoading: settingsIsLoading,
     setDefaultMuted,
+    setUseYtDlp,
     setInvidiousInstance,
     setVolume
   } = useSettings()
@@ -67,6 +68,17 @@ export default function Index() {
           />
         </PanelSectionRow>
         <PanelSectionRow>
+          <ToggleField
+            icon={<FaYoutube />}
+            checked={settings.useYtDlp}
+            label={t('useYtDlp')}
+            description={t('useYtDlpDescription')}
+            onChange={(newVal: boolean) => {
+              setUseYtDlp(newVal)
+            }}
+          />
+        </PanelSectionRow>
+        {!settings.useYtDlp && <PanelSectionRow>
           <DropdownItem
             disabled={
               instancesLoading || !instanceOptions?.length || settingsIsLoading
