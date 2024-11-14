@@ -1,20 +1,22 @@
+import asyncio
 import base64
 import datetime
 import glob
 import json
 import os
 import ssl
-import subprocess
+from asyncio import Lock
 
 import certifi
 import decky_plugin
 from aiohttp import ClientSession
 from settings import SettingsManager
-from typing_extensions import Optional
 
 
 class Plugin:
-    yt_process: Optional[subprocess.Popen] = None
+    yt_process: asyncio.subprocess.Process | None = None
+    # We need this lock to make sure the process output isn't read by two concurrent readers at once.
+    yt_process_lock = Lock()
     music_path = f"{decky_plugin.DECKY_PLUGIN_RUNTIME_DIR}/music"
     cache_path = f"{decky_plugin.DECKY_PLUGIN_RUNTIME_DIR}/cache"
     ssl_context = ssl.create_default_context(cafile=certifi.where())
@@ -37,28 +39,32 @@ class Plugin:
     async def search_yt(self, term: str):
         if self.yt_process is not None:
             self.yt_process.terminate()
-        self.yt_process = subprocess.Popen(
-            [
-                f"{decky_plugin.DECKY_PLUGIN_DIR}/yt-dlp",
-                f"ytsearch10:{term}",
-                "-j",
-                "-f",
-                "bestaudio",
-                "--match-filters",
-                f"duration<?{20*60}",  # 20 minutes is too long.
-            ],
-            stdout=subprocess.PIPE,
+            # Wait for process to terminate.
+            async with self.yt_process_lock:
+                await self.yt_process.communicate()
+        self.yt_process = await asyncio.create_subprocess_exec(
+            f"{decky_plugin.DECKY_PLUGIN_DIR}/yt-dlp",
+            f"ytsearch10:{term}",
+            "-j",
+            "-f",
+            "bestaudio",
+            "--match-filters",
+            f"duration<?{20*60}",  # 20 minutes is too long.
+            stdout=asyncio.subprocess.PIPE,
+            # The returned JSON can get rather big, so we set a generous limit of 10 MB.
+            limit=10 * 1024**2,
         )
 
     async def next_yt_result(self):
-        if (
-            not self.yt_process
-            or not (output := self.yt_process.stdout)
-            or not (line := output.readline().strip())
-        ):
-            return None
-        entry = json.loads(line)
-        return self.entry_to_info(entry)
+        async with self.yt_process_lock:
+            if (
+                not self.yt_process
+                or not (output := self.yt_process.stdout)
+                or not (line := (await output.readline()).strip())
+            ):
+                return None
+            entry = json.loads(line)
+            return self.entry_to_info(entry)
 
     @staticmethod
     def entry_to_info(entry):
@@ -83,34 +89,34 @@ class Plugin:
             extension = local_matches[0].split(".")[-1]
             with open(local_matches[0], "rb") as file:
                 return f"data:audio/{extension};base64,{base64.b64encode(file.read()).decode()}"
-        result = subprocess.run(
-            [
-                f"{decky_plugin.DECKY_PLUGIN_DIR}/yt-dlp",
-                f"{id}",
-                "-j",
-                "-f",
-                "bestaudio",
-            ],
-            stdout=subprocess.PIPE,
+        result = await asyncio.create_subprocess_exec(
+            f"{decky_plugin.DECKY_PLUGIN_DIR}/yt-dlp",
+            f"{id}",
+            "-j",
+            "-f",
+            "bestaudio",
+            stdout=asyncio.subprocess.PIPE,
         )
-        if len(output := result.stdout.strip()) == 0:
+        if (
+            result.stdout is None
+            or len(output := (await result.stdout.read()).strip()) == 0
+        ):
             return None
         entry = json.loads(output)
         return entry["url"]
 
     async def download_yt_audio(self, id: str):
-        subprocess.run(
-            [
-                f"{decky_plugin.DECKY_PLUGIN_DIR}/yt-dlp",
-                f"{id}",
-                "-f",
-                "bestaudio",
-                "-o",
-                "%(id)s.%(ext)s",
-                "-P",
-                self.music_path,
-            ],
+        process = await asyncio.create_subprocess_exec(
+            f"{decky_plugin.DECKY_PLUGIN_DIR}/yt-dlp",
+            f"{id}",
+            "-f",
+            "bestaudio",
+            "-o",
+            "%(id)s.%(ext)s",
+            "-P",
+            self.music_path,
         )
+        await process.communicate()
 
     async def download_url(self, url: str, id: str):
         async with ClientSession() as session:
