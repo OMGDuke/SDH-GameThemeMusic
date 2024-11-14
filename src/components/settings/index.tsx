@@ -134,7 +134,7 @@ export default function Index() {
             onChange={(newVal) => setInvidiousInstance(newVal.data)}
           />
         </PanelSectionRow>}
-        {settings.useYtDlp && <PanelSectionRow>
+        <PanelSectionRow>
           <ToggleField
             icon={<FaDownload />}
             checked={settings.downloadAudio}
@@ -145,7 +145,7 @@ export default function Index() {
             }}
           >
           </ToggleField>
-        </PanelSectionRow>}
+        </PanelSectionRow>
         <PanelSectionRow>
           <ButtonItem
             label={t('deleteDownloadsLabel')}

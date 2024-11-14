@@ -1,19 +1,23 @@
-import os
-
-import datetime
 import base64
+import datetime
 import glob
-import subprocess
 import json
-from typing_extensions import Optional
+import os
+import ssl
+import subprocess
+
+import certifi
 import decky_plugin
+from aiohttp import ClientSession
 from settings import SettingsManager
+from typing_extensions import Optional
 
 
 class Plugin:
     yt_process: Optional[subprocess.Popen] = None
     music_path = f"{decky_plugin.DECKY_PLUGIN_RUNTIME_DIR}/music"
     cache_path = f"{decky_plugin.DECKY_PLUGIN_RUNTIME_DIR}/cache"
+    ssl_context = ssl.create_default_context(cafile=certifi.where())
 
     async def _main(self):
         self.settings = SettingsManager(
@@ -107,6 +111,14 @@ class Plugin:
                 self.music_path,
             ],
         )
+
+    async def download_url(self, url: str, id: str):
+        async with ClientSession() as session:
+            res = await session.get(url, ssl=self.ssl_context)
+            res.raise_for_status()
+            with open(f"{self.music_path}/{id}.webm", "wb") as file:
+                async for chunk in res.content.iter_chunked(1024):
+                    file.write(chunk)
 
     async def clear_downloads(self):
         for file in glob.glob(f"{self.music_path}/*"):

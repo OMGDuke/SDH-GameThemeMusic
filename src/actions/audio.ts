@@ -86,8 +86,17 @@ class InvidiousAudioResolver extends AudioResolver {
     return undefined
   }
 
-  async downloadAudio(_: YouTubeVideo): Promise<boolean> {
-    throw new Error('Method not implemented for Invidious.')
+  async downloadAudio(video: YouTubeVideo): Promise<boolean> {
+    if (!video.url) {
+      return false;
+    }
+    try {
+      await call<[string, string]>('download_url', video.url, video.id)
+      return true;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
   }
 }
 
