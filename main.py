@@ -8,7 +8,7 @@ import ssl
 from asyncio import Lock
 
 import certifi
-import decky_plugin
+import decky
 from aiohttp import ClientSession
 from settings import SettingsManager
 
@@ -17,13 +17,13 @@ class Plugin:
     yt_process: asyncio.subprocess.Process | None = None
     # We need this lock to make sure the process output isn't read by two concurrent readers at once.
     yt_process_lock = Lock()
-    music_path = f"{decky_plugin.DECKY_PLUGIN_RUNTIME_DIR}/music"
-    cache_path = f"{decky_plugin.DECKY_PLUGIN_RUNTIME_DIR}/cache"
+    music_path = f"{decky.DECKY_PLUGIN_RUNTIME_DIR}/music"
+    cache_path = f"{decky.DECKY_PLUGIN_RUNTIME_DIR}/cache"
     ssl_context = ssl.create_default_context(cafile=certifi.where())
 
     async def _main(self):
         self.settings = SettingsManager(
-            name="config", settings_directory=decky_plugin.DECKY_PLUGIN_SETTINGS_DIR
+            name="config", settings_directory=decky.DECKY_PLUGIN_SETTINGS_DIR
         )
 
     async def _unload(self):
@@ -43,7 +43,7 @@ class Plugin:
             async with self.yt_process_lock:
                 await self.yt_process.communicate()
         self.yt_process = await asyncio.create_subprocess_exec(
-            f"{decky_plugin.DECKY_PLUGIN_DIR}/yt-dlp",
+            f"{decky.DECKY_PLUGIN_DIR}/bin/yt-dlp",
             f"ytsearch10:{term}",
             "-j",
             "-f",
@@ -90,7 +90,7 @@ class Plugin:
             with open(local_matches[0], "rb") as file:
                 return f"data:audio/{extension};base64,{base64.b64encode(file.read()).decode()}"
         result = await asyncio.create_subprocess_exec(
-            f"{decky_plugin.DECKY_PLUGIN_DIR}/yt-dlp",
+            f"{decky.DECKY_PLUGIN_DIR}/bin/yt-dlp",
             f"{id}",
             "-j",
             "-f",
@@ -107,7 +107,7 @@ class Plugin:
 
     async def download_yt_audio(self, id: str):
         process = await asyncio.create_subprocess_exec(
-            f"{decky_plugin.DECKY_PLUGIN_DIR}/yt-dlp",
+            f"{decky.DECKY_PLUGIN_DIR}/bin/yt-dlp",
             f"{id}",
             "-f",
             "bestaudio",

@@ -25,11 +25,13 @@
     "url": "https://github.com/OMGDuke/SDH-GameThemeMusic/issues"
   },
   "homepage": "https://github.com/OMGDuke/SDH-GameThemeMusic#readme",
-  "remote_binary": {
-    "name": "yt-dlp",
-    "url": "https://github.com/yt-dlp/yt-dlp/releases/download/2024.11.04/yt-dlp",
-    "sha256hash": "dad4a9ce9db902cf1e69ca71c0ca778917fa5a804a2ab43bac612b0abef76314"
-  },
+  "remote_binary": [
+    {
+      "name": "yt-dlp",
+      "url": "https://github.com/yt-dlp/yt-dlp/releases/download/2024.11.04/yt-dlp",
+      "sha256hash": "dad4a9ce9db902cf1e69ca71c0ca778917fa5a804a2ab43bac612b0abef76314"
+    }
+  ],
   "devDependencies": {
     "@decky/rollup": "^1.0.1",
     "@decky/ui": "^4.7.1",
