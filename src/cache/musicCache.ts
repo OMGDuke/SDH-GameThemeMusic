@@ -26,10 +26,14 @@ export async function updateCache(appId: number, newData: GameThemeMusicCache) {
   return newCache
 }
 
-export async function exportCache() {
+export async function getFullCache(): Promise<GameThemeMusicCacheMapping> {
   let fullCache: GameThemeMusicCacheMapping = {};
-  await localforage.iterate((value: GameThemeMusicCache, key: string, _) => fullCache[key] = value)
-  await call<[GameThemeMusicCacheMapping]>('export_cache', fullCache)
+  await localforage.iterate((value: GameThemeMusicCache, key: string, _) => { fullCache[key] = value })
+  return fullCache;
+}
+
+export async function exportCache() {
+  await call<[GameThemeMusicCacheMapping]>('export_cache', await getFullCache())
 }
 
 export async function importCache(name: string) {

@@ -75,19 +75,26 @@ class Plugin:
             "thumbnail": entry["thumbnail"],
         }
 
-    async def single_yt_url(self, id: str):
+    def local_match(self, id: str) -> str | None:
         local_matches = [
             x for x in glob.glob(f"{self.music_path}/{id}.*") if os.path.isfile(x)
         ]
-        if len(local_matches) > 0:
-            assert (
-                len(local_matches) == 1
-            ), "More than one downloaded audio with same ID found."
+        if len(local_matches) == 0:
+            return None
+
+        assert (
+            len(local_matches) == 1
+        ), "More than one downloaded audio with same ID found."
+        return local_matches[0]
+
+    async def single_yt_url(self, id: str):
+        local_match = self.local_match(id)
+        if local_match is not None:
             # The audio has already been downloaded, so we can just use that one.
             # However, we cannot use local paths in the <audio> elements, so we'll
             # convert this to a base64-encoded data URL first.
-            extension = local_matches[0].split(".")[-1]
-            with open(local_matches[0], "rb") as file:
+            extension = local_match.split(".")[-1]
+            with open(local_match, "rb") as file:
                 return f"data:audio/{extension};base64,{base64.b64encode(file.read()).decode()}"
         result = await asyncio.create_subprocess_exec(
             f"{decky.DECKY_PLUGIN_DIR}/bin/yt-dlp",
@@ -106,6 +113,9 @@ class Plugin:
         return entry["url"]
 
     async def download_yt_audio(self, id: str):
+        if self.local_match(id) is not None:
+            # Already downloaded—there's nothing we need to do.
+            return
         process = await asyncio.create_subprocess_exec(
             f"{decky.DECKY_PLUGIN_DIR}/bin/yt-dlp",
             f"{id}",

@@ -88,7 +88,10 @@ class InvidiousAudioResolver extends AudioResolver {
 
   async downloadAudio(video: YouTubeVideo): Promise<boolean> {
     if (!video.url) {
-      return false;
+      video.url = await this.getAudioUrlFromVideo(video);
+      if (!video.url) {
+        return false;
+      }
     }
     try {
       await call<[string, string]>('download_url', video.url, video.id)
