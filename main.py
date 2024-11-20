@@ -29,6 +29,14 @@ class Plugin:
     async def _unload(self):
         if self.yt_process is not None:
             self.yt_process.terminate()
+            # Wait for process to terminate.
+            async with self.yt_process_lock:
+                try:
+                    # Allow up to 5 seconds for termination.
+                    await asyncio.wait_for(self.yt_process.communicate(), timeout=5)
+                except TimeoutError:
+                    # Otherwise, send SIGKILL.
+                    self.yt_process.kill()
 
     async def set_setting(self, key, value):
         self.settings.setSetting(key, value)
