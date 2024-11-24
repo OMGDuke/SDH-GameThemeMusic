@@ -11,8 +11,12 @@ function getCurrentLanguage(): keyof typeof languages {
 
 function useTranslations() {
   const [lang] = useState(getCurrentLanguage())
-  return function (key: keyof (typeof languages)['en'], replacements: { [key: string]: any } = {}): string {
-    let result;
+  return function (
+    key: keyof (typeof languages)['en'],
+    replacements: { [key: string]: string } = {}
+  ): string {
+    let result
+    //
     if (languages[lang]?.[key]?.length) {
       result = languages[lang]?.[key]
     } else if (languages.en?.[key]?.length) {
@@ -21,9 +25,12 @@ function useTranslations() {
       result = key
     }
     // Based on this generic replacement solution: https://stackoverflow.com/a/61634647
-    return result.replace(/{\w+}/g, (placeholder: String) =>
-      replacements[placeholder.substring(1, placeholder.length - 1)] || placeholder
-    );
+    return result.replace(
+      /{\w+}/g,
+      (placeholder: string) =>
+        replacements[placeholder.substring(1, placeholder.length - 1)] ||
+        placeholder
+    )
   }
 }
 

@@ -14,7 +14,6 @@ type GameThemeMusicCache = {
 
 type GameThemeMusicCacheMapping = { [key: string]: GameThemeMusicCache }
 
-
 export async function updateCache(appId: number, newData: GameThemeMusicCache) {
   const oldCache = (await localforage.getItem(
     appId.toString()
@@ -27,9 +26,11 @@ export async function updateCache(appId: number, newData: GameThemeMusicCache) {
 }
 
 export async function getFullCache(): Promise<GameThemeMusicCacheMapping> {
-  let fullCache: GameThemeMusicCacheMapping = {};
-  await localforage.iterate((value: GameThemeMusicCache, key: string, _) => { fullCache[key] = value })
-  return fullCache;
+  const fullCache: GameThemeMusicCacheMapping = {}
+  await localforage.iterate((value: GameThemeMusicCache, key) => {
+    fullCache[key] = value
+  })
+  return fullCache
 }
 
 export async function exportCache() {
@@ -37,7 +38,10 @@ export async function exportCache() {
 }
 
 export async function importCache(name: string) {
-  const newCache = await call<[string], GameThemeMusicCacheMapping>('import_cache', name)
+  const newCache = await call<[string], GameThemeMusicCacheMapping>(
+    'import_cache',
+    name
+  )
   localforage.clear()
   for (const [key, value] of Object.entries(newCache)) {
     await localforage.setItem(key, value)

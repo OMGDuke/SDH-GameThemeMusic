@@ -1,16 +1,25 @@
 import { call } from '@decky/api'
-import { YouTubeVideo, YouTubeInitialData, Audio, YouTubeVideoPreview } from '../../types/YouTube'
+import {
+  YouTubeVideo,
+  YouTubeInitialData,
+  Audio,
+  YouTubeVideoPreview
+} from '../../types/YouTube'
 import { Settings, defaultSettings } from '../hooks/useSettings'
 
 abstract class AudioResolver {
-  abstract getYouTubeSearchResults(searchTerm: string): AsyncIterable<YouTubeVideoPreview>;
-  abstract getAudioUrlFromVideo(video: YouTubeVideo): Promise<string | undefined>;
-  abstract downloadAudio(video: YouTubeVideo): Promise<boolean>;
+  abstract getYouTubeSearchResults(
+    searchTerm: string
+  ): AsyncIterable<YouTubeVideoPreview>
+  abstract getAudioUrlFromVideo(
+    video: YouTubeVideo
+  ): Promise<string | undefined>
+  abstract downloadAudio(video: YouTubeVideo): Promise<boolean>
 
   async getAudio(
     appName: string
   ): Promise<{ videoId: string; audioUrl: string } | undefined> {
-    const videos = this.getYouTubeSearchResults(appName + " Theme Music")
+    const videos = this.getYouTubeSearchResults(appName + ' Theme Music')
     for await (const video of videos) {
       const audioUrl = await this.getAudioUrlFromVideo(video)
       if (audioUrl?.length) {
@@ -31,8 +40,8 @@ class InvidiousAudioResolver extends AudioResolver {
     return savedSettings.invidiousInstance
   }
 
-  async* getYouTubeSearchResults(
-    searchTerm: string,
+  async *getYouTubeSearchResults(
+    searchTerm: string
   ): AsyncIterable<YouTubeVideoPreview> {
     try {
       const encodedSearchTerm = `${encodeURIComponent(searchTerm)}`
@@ -59,9 +68,7 @@ class InvidiousAudioResolver extends AudioResolver {
     return
   }
 
-  async getAudioUrlFromVideo(
-    video: YouTubeVideo
-  ): Promise<string | undefined> {
+  async getAudioUrlFromVideo(video: YouTubeVideo): Promise<string | undefined> {
     try {
       const endpoint = await this.getEndpoint()
       const res = await fetch(
@@ -88,24 +95,24 @@ class InvidiousAudioResolver extends AudioResolver {
 
   async downloadAudio(video: YouTubeVideo): Promise<boolean> {
     if (!video.url) {
-      video.url = await this.getAudioUrlFromVideo(video);
+      video.url = await this.getAudioUrlFromVideo(video)
       if (!video.url) {
-        return false;
+        return false
       }
     }
     try {
       await call<[string, string]>('download_url', video.url, video.id)
-      return true;
+      return true
     } catch (e) {
-      console.error(e);
-      return false;
+      console.error(e)
+      return false
     }
   }
 }
 
 class YtDlpAudioResolver extends AudioResolver {
-  async* getYouTubeSearchResults(
-    searchTerm: string,
+  async *getYouTubeSearchResults(
+    searchTerm: string
   ): AsyncIterable<YouTubeVideoPreview> {
     try {
       await call<[string]>('search_yt', searchTerm)
@@ -123,31 +130,34 @@ class YtDlpAudioResolver extends AudioResolver {
 
   async getAudioUrlFromVideo(video: YouTubeVideo): Promise<string | undefined> {
     if (video.url) {
-      return video.url;
+      return video.url
     } else {
       // We need to retrieve the audio URL first.
       // This may return a local filesystem URL if the file has been downloaded before.
-      const result = await call<[string], string | null>('single_yt_url', video.id)
-      return result || undefined;
+      const result = await call<[string], string | null>(
+        'single_yt_url',
+        video.id
+      )
+      return result || undefined
     }
   }
 
   async downloadAudio(video: YouTubeVideo): Promise<boolean> {
     try {
       await call<[string]>('download_yt_audio', video.id)
-      return true;
+      return true
     } catch (e) {
-      console.error(e);
-      return false;
+      console.error(e)
+      return false
     }
   }
 }
 
 export function getResolver(useYtDlp: boolean): AudioResolver {
   if (useYtDlp) {
-    return new YtDlpAudioResolver();
+    return new YtDlpAudioResolver()
   } else {
-    return new InvidiousAudioResolver();
+    return new InvidiousAudioResolver()
   }
 }
 
@@ -234,15 +244,16 @@ export async function getInvidiousInstances(): Promise<
         return instances
           .filter((ins) => ins.type === 'https')
           .map((ins) => ({
-            name: `${ins.flag} ${ins.monitor?.alias ?? ins.uri} | ${ins.stats?.usage.users.total} Users${ins.monitor?.uptime
-              ? ` | Uptime: ${(ins.monitor.uptime / 100).toLocaleString(
-                'en',
-                {
-                  style: 'percent'
-                }
-              )}`
-              : ''
-              }`,
+            name: `${ins.flag} ${ins.monitor?.alias ?? ins.uri} | ${ins.stats?.usage.users.total} Users${
+              ins.monitor?.uptime
+                ? ` | Uptime: ${(ins.monitor.uptime / 100).toLocaleString(
+                    'en',
+                    {
+                      style: 'percent'
+                    }
+                  )}`
+                : ''
+            }`,
             url: ins.uri
           }))
       }

@@ -43,3 +43,7 @@ yalc.lock
 
 # Ignore output folder
 backend/out
+
+.pnpm-store/
+cli/
+out/
