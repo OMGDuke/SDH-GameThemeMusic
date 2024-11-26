@@ -1,11 +1,12 @@
-import { DialogButton, Focusable } from '@decky/ui'
+import { DialogButton, Focusable, ProgressBar, ProgressBarWithInfo } from '@decky/ui'
 import React, { useEffect, useState } from 'react'
 import useTranslations from '../../hooks/useTranslations'
-import { getAudioUrlFromVideoId } from '../../actions/audio'
-import YouTubeVideo from '../../../types/YouTube'
+import { getResolver } from '../../actions/audio'
+import { YouTubeVideoPreview } from '../../../types/YouTube'
 import { FaCheck } from 'react-icons/fa'
 import Spinner from '../spinner'
 import useAudioPlayer from '../../hooks/useAudioPlayer'
+import { useSettings } from '../../hooks/useSettings'
 
 export default function AudioPlayer({
   handlePlay,
@@ -14,7 +15,7 @@ export default function AudioPlayer({
   video,
   volume
 }: {
-  video: YouTubeVideo & { isPlaying: boolean }
+  video: YouTubeVideoPreview & { isPlaying: boolean }
   volume: number
   handlePlay: (startPlaying: boolean) => void
   selected: boolean
@@ -22,25 +23,29 @@ export default function AudioPlayer({
     title: string
     videoId: string
     audioUrl: string
-  }) => void
+  }) => Promise<void>
 }) {
   const t = useTranslations()
-  const [loading, setLoading] = useState(true)
+  // If the URL is defined already, we don't need to load anything here.
+  const [loading, setLoading] = useState(video.url === undefined)
+  const [downloading, setDownloading] = useState(false)
   const [audioUrl, setAudio] = useState<string | undefined>()
+  const { settings, isLoading: settingsLoading } = useSettings()
 
   const audioPlayer = useAudioPlayer(audioUrl)
 
   useEffect(() => {
     async function getData() {
+      const resolver = getResolver(settings.useYtDlp);
       setLoading(true)
-      const res = await getAudioUrlFromVideoId(video?.id)
+      const res = await resolver.getAudioUrlFromVideo(video)
       setAudio(res)
       setLoading(false)
     }
-    if (video.id.length) {
+    if (video.id.length && !settingsLoading) {
       getData()
     }
-  }, [video.id])
+  }, [video.id, settingsLoading])
 
   useEffect(() => {
     if (audioPlayer.isReady) {
@@ -58,13 +63,16 @@ export default function AudioPlayer({
     handlePlay(!video.isPlaying)
   }
 
-  function selectAudio() {
-    if (audioUrl?.length && video.id.length)
-      selectNewAudio({
+  async function selectAudio() {
+    if (audioUrl?.length && video.id.length) {
+      setDownloading(true);
+      await selectNewAudio({
         title: video.title,
         videoId: video.id,
         audioUrl: audioUrl
       })
+      setDownloading(false);
+    }
   }
 
   if (!loading && !audioUrl) return <></>
@@ -117,15 +125,17 @@ export default function AudioPlayer({
           {video.title}
         </p>
 
-        {loading ? (
+        {(loading || downloading) ? (
           <div
             style={{
               height: '85px',
               display: 'flex',
+              flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center'
             }}
           >
+            {downloading && <div>Downloading...</div>}
             <Spinner />
           </div>
         ) : (
@@ -150,7 +160,7 @@ export default function AudioPlayer({
                 focusable={!selected && !loading}
                 onClick={selectAudio}
               >
-                {selected ? t('selected') : t('select')}
+                {selected ? t('selected') : (settings.downloadAudio ? t('download') : t('select'))}
               </DialogButton>
               {selected ? (
                 <div

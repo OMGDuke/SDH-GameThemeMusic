@@ -73,9 +73,8 @@ const contextMenuPatch = (LibraryContextMenu: any) => {
                 (x: any) => x?.key === 'game-theme-music-change-music'
               )
               if (gtmIdx != -1) nextProps.children.splice(gtmIdx, 1)
-            }
-            catch (e) {
-              return component;
+            } catch (e) {
+              return component
             }
 
             if (shouldUpdate === true) {
