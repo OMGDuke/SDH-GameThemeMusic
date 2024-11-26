@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { getAudio, getAudioUrlFromVideoId } from '../actions/audio'
+import { getResolver } from '../actions/audio'
 
 import { getCache, updateCache } from '../cache/musicCache'
 import { useSettings } from '../hooks/useSettings'
@@ -17,18 +17,21 @@ const useThemeMusic = (appId: number) => {
   useEffect(() => {
     let ignore = false
     async function getData() {
+      const resolver = getResolver(settings.useYtDlp)
       const cache = await getCache(appId)
       if (cache?.videoId?.length == 0) {
         return setAudio({ videoId: '', audioUrl: '' })
       } else if (cache?.videoId?.length) {
-        const newAudio = await getAudioUrlFromVideoId(cache.videoId)
+        const newAudio = await resolver.getAudioUrlFromVideo({
+          id: cache.videoId
+        })
         if (newAudio?.length) {
           return setAudio({ videoId: cache.videoId, audioUrl: newAudio })
         }
       } else if (settings.defaultMuted) {
         return setAudio({ videoId: '', audioUrl: '' })
       } else {
-        const newAudio = await getAudio(appName as string)
+        const newAudio = await resolver.getAudio(appName as string)
         if (ignore) {
           return
         }

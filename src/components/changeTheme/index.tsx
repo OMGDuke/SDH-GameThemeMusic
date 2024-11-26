@@ -4,44 +4,49 @@ import React, { useEffect, useState } from 'react'
 import useTranslations from '../../hooks/useTranslations'
 import ChangePage from './changePage'
 import AboutPage from './aboutPage'
-import { getYouTubeSearchResults } from '../../actions/audio'
-import YouTubeVideo from '../../../types/YouTube'
+import { getResolver } from '../../actions/audio'
+import { YouTubeVideoPreview } from '../../../types/YouTube'
 import GameSettings from './gameSettings'
+import { useSettings } from '../../hooks/useSettings'
 
 export default function ChangeTheme() {
   const [currentTab, setCurrentTab] = useState<string>('change-music-tab')
   const t = useTranslations()
+  const { settings, isLoading: settingsLoading } = useSettings()
   const { appid } = useParams<{ appid: string }>()
   const appDetails = appStore.GetAppOverviewByGameID(parseInt(appid))
-  const appName = appDetails?.display_name
+  const appName = appDetails?.display_name?.replace(/(™|®|©)/g, '')
 
   const [videos, setVideos] = useState<
-    (YouTubeVideo & { isPlaying: boolean })[]
+    (YouTubeVideoPreview & { isPlaying: boolean })[]
   >([])
-  const [loading, setLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState<string>()
-
+  const [loadingNum, setLoadingNum] = useState(0)
+  const initialSearch = appName?.concat(" Theme Music") ?? ''
+  const [searchTerm, setSearchTerm] = useState(initialSearch)
   useEffect(() => {
     let ignore = false
     async function getData() {
-      setLoading(true)
-      const res = await getYouTubeSearchResults(
-        searchTerm?.length ? searchTerm : appName,
-        Boolean(searchTerm?.length)
+      setLoadingNum(x => x + 1);
+      setVideos([])
+      const resolver = getResolver(settings.useYtDlp);
+      const res = resolver.getYouTubeSearchResults(
+        searchTerm
       )
-      if (ignore) {
-        return
+      for await (const video of res) {
+        if (ignore) {
+          break;
+        }
+        setVideos((oldVideos) => [...oldVideos, { isPlaying: false, ...video }])
       }
-      setVideos(res?.map((v) => ({ ...v, isPlaying: false })) || [])
-      setLoading(false)
+      setLoadingNum(x => x - 1);
     }
-    if (appName) {
+    if (searchTerm.length > 0 && !settingsLoading) {
       getData()
     }
     return () => {
       ignore = true
     }
-  }, [searchTerm, appName])
+  }, [searchTerm, settingsLoading])
 
   function handlePlay(index: number, startPlay: boolean) {
     setVideos((oldVideos) => {
@@ -51,6 +56,11 @@ export default function ChangeTheme() {
       }))
       return newVideos
     })
+  }
+
+  function setInitialSearch() {
+    setSearchTerm(initialSearch)
+    return initialSearch
   }
 
   return (
@@ -70,9 +80,11 @@ export default function ChangeTheme() {
             content: (
               <ChangePage
                 videos={videos}
-                loading={loading}
+                loading={loadingNum > 0}
                 handlePlay={handlePlay}
                 customSearch={setSearchTerm}
+                currentSearch={searchTerm}
+                setInitialSearch={setInitialSearch}
               />
             ),
             id: 'change-music-tab'
