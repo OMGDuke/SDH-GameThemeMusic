@@ -1,4 +1,3 @@
-import React from 'react'
 import { definePlugin, staticClasses } from '@decky/ui'
 import { routerHook } from '@decky/api'
 

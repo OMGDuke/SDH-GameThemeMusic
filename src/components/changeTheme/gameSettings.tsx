@@ -5,7 +5,7 @@ import {
   PanelSectionRow,
   useParams
 } from '@decky/ui'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { getCache, updateCache } from '../../cache/musicCache'
 
 import { getResolver } from '../../actions/audio'

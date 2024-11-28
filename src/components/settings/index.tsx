@@ -14,7 +14,7 @@ import {
   SliderField,
   ToggleField
 } from '@decky/ui'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import { useSettings } from '../../hooks/useSettings'
 import useTranslations from '../../hooks/useTranslations'
 import {
