@@ -5,7 +5,7 @@ import {
   createReactTreePatcher
 } from '@decky/ui'
 import { routerHook } from '@decky/api'
-import React, { ReactElement } from 'react'
+import { ReactElement } from 'react'
 import ThemePlayer from '../components/themePlayer'
 import {
   AudioLoaderCompatState,

@@ -5,18 +5,18 @@ import glob
 import json
 import os
 import ssl
-from asyncio import Lock
 
+import aiohttp
 import certifi
-import decky
-from aiohttp import ClientSession
-from settings import SettingsManager
+
+import decky  # type: ignore
+from settings import SettingsManager  # type: ignore
 
 
 class Plugin:
     yt_process: asyncio.subprocess.Process | None = None
     # We need this lock to make sure the process output isn't read by two concurrent readers at once.
-    yt_process_lock = Lock()
+    yt_process_lock = asyncio.Lock()
     music_path = f"{decky.DECKY_PLUGIN_RUNTIME_DIR}/music"
     cache_path = f"{decky.DECKY_PLUGIN_RUNTIME_DIR}/cache"
     ssl_context = ssl.create_default_context(cafile=certifi.where())
@@ -27,7 +27,8 @@ class Plugin:
         )
 
     async def _unload(self):
-        if self.yt_process is not None:
+        # Add a check to make sure the process is still running before trying to terminate to avoid ProcessLookupError
+        if self.yt_process is not None and self.yt_process.returncode is None:
             self.yt_process.terminate()
             # Wait for process to terminate.
             async with self.yt_process_lock:
@@ -45,7 +46,8 @@ class Plugin:
         return self.settings.getSetting(key, default)
 
     async def search_yt(self, term: str):
-        if self.yt_process is not None:
+        # Add a check to make sure the process is still running before trying to terminate to avoid ProcessLookupError
+        if self.yt_process is not None and self.yt_process.returncode is None:
             self.yt_process.terminate()
             # Wait for process to terminate.
             async with self.yt_process_lock:
@@ -137,7 +139,7 @@ class Plugin:
         await process.communicate()
 
     async def download_url(self, url: str, id: str):
-        async with ClientSession() as session:
+        async with aiohttp.ClientSession() as session:
             res = await session.get(url, ssl=self.ssl_context)
             res.raise_for_status()
             with open(f"{self.music_path}/{id}.webm", "wb") as file:

@@ -1,4 +1,3 @@
-import React from 'react'
 import { definePlugin, staticClasses } from '@decky/ui'
 import { routerHook } from '@decky/api'
 
@@ -12,6 +11,8 @@ import {
   AudioLoaderCompatState,
   AudioLoaderCompatStateContextProvider
 } from './state/AudioLoaderCompatState'
+
+import { name } from '@decky/manifest'
 
 export default definePlugin(() => {
   const state: AudioLoaderCompatState = new AudioLoaderCompatState()
@@ -51,7 +52,7 @@ export default definePlugin(() => {
     )
 
   return {
-    title: <div className={staticClasses.Title}>Game Theme Music</div>,
+    title: <div className={staticClasses.Title}>{name}</div>,
     icon: <GiMusicalNotes />,
     content: <Settings />,
     onDismount() {

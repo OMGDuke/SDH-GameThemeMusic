@@ -68,7 +68,8 @@ const useAudioPlayer = (
   }
 
   function togglePlay() {
-    isPlaying ? stop() : play()
+    if (isPlaying) stop()
+    else play()
   }
 
   function setVolume(newVolume: number) {

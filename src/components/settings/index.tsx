@@ -14,7 +14,7 @@ import {
   SliderField,
   ToggleField
 } from '@decky/ui'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import { useSettings } from '../../hooks/useSettings'
 import useTranslations from '../../hooks/useTranslations'
 import {
@@ -86,7 +86,9 @@ export default function Index() {
     const modal = showModal(
       <ConfirmModal
         strTitle={t('restoreDownloadsConfirm')}
-        strDescription={t('restoreDownloadsConfirmDescription', { num })}
+        strDescription={t('restoreDownloadsConfirmDescription', {
+          num: num.toString()
+        })}
         onOK={() => restoreDownloads(modal)}
       />
     )
@@ -134,8 +136,8 @@ export default function Index() {
                 <ProgressBarWithInfo
                   nProgress={progress}
                   sOperationText={t('restoreDownloadsOperation', {
-                    current,
-                    total
+                    current: current.toString(),
+                    total: total.toString()
                   })}
                 />
               </div>
@@ -300,6 +302,7 @@ export default function Index() {
                     <MenuItem
                       tone="positive"
                       onClick={() => restoreCache(backup)}
+                      key={backup}
                     >
                       {backup}
                     </MenuItem>

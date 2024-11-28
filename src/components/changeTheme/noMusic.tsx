@@ -1,5 +1,4 @@
 import { DialogButton, Focusable } from '@decky/ui'
-import React from 'react'
 import useTranslations from '../../hooks/useTranslations'
 
 import { FaCheck, FaVolumeMute } from 'react-icons/fa'

@@ -1,5 +1,5 @@
 import { useParams } from '@decky/ui'
-import React, { ReactElement, useEffect } from 'react'
+import { ReactElement, useEffect } from 'react'
 
 import useThemeMusic from '../../hooks/useThemeMusic'
 import { useSettings } from '../../hooks/useSettings'
