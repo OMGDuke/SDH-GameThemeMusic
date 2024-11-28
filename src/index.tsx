@@ -13,6 +13,8 @@ import {
   AudioLoaderCompatStateContextProvider
 } from './state/AudioLoaderCompatState'
 
+import { name } from '@decky/manifest'
+
 export default definePlugin(() => {
   const state: AudioLoaderCompatState = new AudioLoaderCompatState()
   const libraryPatch = patchLibraryApp(state)
@@ -51,7 +53,7 @@ export default definePlugin(() => {
     )
 
   return {
-    title: <div className={staticClasses.Title}>Game Theme Music</div>,
+    title: <div className={staticClasses.Title}>{name}</div>,
     icon: <GiMusicalNotes />,
     content: <Settings />,
     onDismount() {

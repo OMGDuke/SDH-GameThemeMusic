@@ -1,5 +1,5 @@
-import { DialogButton, Focusable, ProgressBar, ProgressBarWithInfo } from '@decky/ui'
-import React, { useEffect, useState } from 'react'
+import { DialogButton, Focusable } from '@decky/ui'
+import { useEffect, useState } from 'react'
 import useTranslations from '../../hooks/useTranslations'
 import { getResolver } from '../../actions/audio'
 import { YouTubeVideoPreview } from '../../../types/YouTube'
@@ -36,7 +36,7 @@ export default function AudioPlayer({
 
   useEffect(() => {
     async function getData() {
-      const resolver = getResolver(settings.useYtDlp);
+      const resolver = getResolver(settings.useYtDlp)
       setLoading(true)
       const res = await resolver.getAudioUrlFromVideo(video)
       setAudio(res)
@@ -55,7 +55,8 @@ export default function AudioPlayer({
 
   useEffect(() => {
     if (audioPlayer.isReady) {
-      video.isPlaying ? audioPlayer.play() : audioPlayer.stop()
+      if (video.isPlaying) audioPlayer.play()
+      else audioPlayer.stop()
     }
   }, [video.isPlaying])
 
@@ -65,13 +66,13 @@ export default function AudioPlayer({
 
   async function selectAudio() {
     if (audioUrl?.length && video.id.length) {
-      setDownloading(true);
+      setDownloading(true)
       await selectNewAudio({
         title: video.title,
         videoId: video.id,
         audioUrl: audioUrl
       })
-      setDownloading(false);
+      setDownloading(false)
     }
   }
 
@@ -125,7 +126,7 @@ export default function AudioPlayer({
           {video.title}
         </p>
 
-        {(loading || downloading) ? (
+        {loading || downloading ? (
           <div
             style={{
               height: '85px',
@@ -160,7 +161,11 @@ export default function AudioPlayer({
                 focusable={!selected && !loading}
                 onClick={selectAudio}
               >
-                {selected ? t('selected') : (settings.downloadAudio ? t('download') : t('select'))}
+                {selected
+                  ? t('selected')
+                  : settings.downloadAudio
+                    ? t('download')
+                    : t('select')}
               </DialogButton>
               {selected ? (
                 <div

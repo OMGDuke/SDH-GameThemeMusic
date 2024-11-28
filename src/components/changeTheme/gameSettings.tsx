@@ -31,7 +31,7 @@ export default function GameSettings() {
   useEffect(() => {
     async function getData() {
       setLoading(true)
-      const resolver = getResolver(settings.useYtDlp);
+      const resolver = getResolver(settings.useYtDlp)
       const cache = await getCache(parseInt(appid))
       if (typeof cache?.volume === 'number' && isFinite(cache.volume)) {
         setThemeVolume(cache.volume)
@@ -39,7 +39,9 @@ export default function GameSettings() {
         setThemeVolume(settings.volume)
       }
       if (cache?.videoId?.length) {
-        const newAudio = await resolver.getAudioUrlFromVideo({ id: cache?.videoId })
+        const newAudio = await resolver.getAudioUrlFromVideo({
+          id: cache?.videoId
+        })
         setCurrentAudio(newAudio)
       } else {
         const newAudio = await resolver.getAudio(appName as string)

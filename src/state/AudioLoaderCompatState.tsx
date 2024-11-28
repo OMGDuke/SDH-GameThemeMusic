@@ -77,7 +77,8 @@ export class AudioLoaderCompatState {
   private setAudioLoaderEnabled(enabled: boolean) {
     const audioLoader = (window as any).AUDIOLOADER_MENUMUSIC
     if (audioLoader) {
-      enabled ? audioLoader.play() : audioLoader.pause()
+      if (enabled) audioLoader.play()
+      else audioLoader.pause()
     }
   }
 
@@ -108,6 +109,7 @@ export const useAudioLoaderCompatState = () =>
 
 interface ProviderProps {
   AudioLoaderCompatStateClass: AudioLoaderCompatState
+  children?: React.ReactNode
 }
 
 // This is a React Component that you can wrap multiple separate things in, as long as they both have used the same instance of the CssLoaderState class, they will have synced state

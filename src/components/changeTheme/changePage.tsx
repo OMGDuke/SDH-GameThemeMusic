@@ -9,7 +9,7 @@ import {
   showModal,
   useParams
 } from '@decky/ui'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useSettings } from '../../hooks/useSettings'
 import AudioPlayer from './audioPlayer'
 import { getCache, updateCache } from '../../cache/musicCache'
@@ -29,8 +29,8 @@ export default function ChangePage({
   videos: (YouTubeVideoPreview & { isPlaying: boolean })[]
   loading: boolean
   handlePlay: (idx: number, startPlaying: boolean) => void
-  customSearch: (term: string) => void,
-  setInitialSearch: () => string,
+  customSearch: (term: string) => void
+  setInitialSearch: () => string
   currentSearch: string
 }) {
   const t = useTranslations()
@@ -55,16 +55,17 @@ export default function ChangePage({
     audioUrl: string
   }) {
     if (settings.downloadAudio) {
-      const success = await getResolver(settings.useYtDlp).downloadAudio({ 'id': audio.videoId, 'url': audio.audioUrl });
+      const success = await getResolver(settings.useYtDlp).downloadAudio({
+        id: audio.videoId,
+        url: audio.audioUrl
+      })
       if (!success) {
         showModal(
-          <ModalRoot>
-            {t('downloadFailedDetail')}
-          </ModalRoot>,
+          <ModalRoot>{t('downloadFailedDetail')}</ModalRoot>,
           undefined,
           { strTitle: t('downloadFailed') }
         )
-        return;
+        return
       }
     }
     setSelected(audio.videoId)

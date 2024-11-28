@@ -73,6 +73,7 @@ const contextMenuPatch = (LibraryContextMenu: any) => {
                 (x: any) => x?.key === 'game-theme-music-change-music'
               )
               if (gtmIdx != -1) nextProps.children.splice(gtmIdx, 1)
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
             } catch (e) {
               return component
             }

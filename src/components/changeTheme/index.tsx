@@ -21,24 +21,22 @@ export default function ChangeTheme() {
     (YouTubeVideoPreview & { isPlaying: boolean })[]
   >([])
   const [loadingNum, setLoadingNum] = useState(0)
-  const initialSearch = appName?.concat(" Theme Music") ?? ''
+  const initialSearch = appName?.concat(' Theme Music') ?? ''
   const [searchTerm, setSearchTerm] = useState(initialSearch)
   useEffect(() => {
     let ignore = false
     async function getData() {
-      setLoadingNum(x => x + 1);
+      setLoadingNum((x) => x + 1)
       setVideos([])
-      const resolver = getResolver(settings.useYtDlp);
-      const res = resolver.getYouTubeSearchResults(
-        searchTerm
-      )
+      const resolver = getResolver(settings.useYtDlp)
+      const res = resolver.getYouTubeSearchResults(searchTerm)
       for await (const video of res) {
         if (ignore) {
-          break;
+          break
         }
         setVideos((oldVideos) => [...oldVideos, { isPlaying: false, ...video }])
       }
-      setLoadingNum(x => x - 1);
+      setLoadingNum((x) => x - 1)
     }
     if (searchTerm.length > 0 && !settingsLoading) {
       getData()
