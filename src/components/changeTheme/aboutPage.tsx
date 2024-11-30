@@ -16,7 +16,6 @@ export default function AboutPage() {
         <PanelSocialButton icon={<SiGithub fill="#f5f5f5" />} url="https://github.com/OMGDuke/SDH-GameThemeMusic/">Github</PanelSocialButton>
         <PanelSocialButton icon={<SiCrowdin fill="#FFFFFF" />} url="https://crowdin.com/project/sdh-gamethememusic">{t('helpTranslate')}</PanelSocialButton>
       </PanelSection>
-
     </div>
   )
 }
