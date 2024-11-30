@@ -1,7 +1,7 @@
 {
     "about": "Über",
-    "aboutDescription": "Spiel Titellieder auf der Spieleseite",
-    "aboutLabel": "Über Spiel-Titellieder",
+    "aboutDescription": "Spiel Titellieder auf der Spiele Seite",
+    "aboutLabel": "Über Spiel Titellieder",
     "backupOverrides": "Überschreibungen sichern",
     "backupOverridesLabel": "Alle Überschreibungen sichern",
     "backupSuccessful": "Backup erfolgreich",
@@ -56,6 +56,6 @@
     "supportLabel": "Hilfe",
     "useYtDlp": "yt-dlp verwenden",
     "useYtDlpDescription": "Direkt auf YouTube zugreifen statt über Invidious",
-    "volume": "Musik-Lautstärke",
-    "volumeDescription": "Lautstärke der Musik anpassen"
+    "volume": "Musik Lautstärke",
+    "volumeDescription": "Musik Lautstärke anpassen"
 }
