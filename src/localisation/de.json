@@ -33,7 +33,7 @@
     "invidiousInstanceDescription": "Welche Invidious-Instanz möchtest du zum Suchen und Abrufen von Musik verwenden?",
     "play": "Abspielen",
     "reset": "Zurücksetzen",
-    "resetVolume": "Reset",
+    "resetVolume": "Zurücksetzen",
     "restoreDownloads": "Downloads wiederherstellen",
     "restoreDownloadsConfirm": "Wirklich alle fehlenden Lieder herunterladen?",
     "restoreDownloadsConfirmDescription": "Dies wird bis zu {num} Lieder herunterladen und kann eine Weile dauern.",
