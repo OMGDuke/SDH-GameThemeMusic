@@ -12,7 +12,7 @@
     "defaultMutedDescription": "По умолчанию не воспроизводить музыку, пока она не выбрана вручную",
     "deleteDownloads": "Удалить загруженные",
     "deleteDownloadsConfirm": "Вы уверены, что хотите удалить всю загруженную музыку?",
-    "deleteDownloadsDescription": "Удалить все загруженные музыки. Это не сбросит переопределение.",
+    "deleteDownloadsDescription": "Удалить все загруженные песни. Это не сбросит изменения.",
     "deleteDownloadsLabel": "Удалить все загрузки",
     "deleteOverrides": "Удалить переопределения",
     "deleteOverridesConfirm": "Вы уверены, что хотите удалить все изменения?",
