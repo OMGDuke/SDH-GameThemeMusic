@@ -38,6 +38,7 @@ import useInvidiousInstances from '../../hooks/useInvidiousInstances'
 import { toaster } from '@decky/api'
 import { getResolver } from '../../actions/audio'
 import PanelSocialButton from './socialButton'
+import { logger } from '../../utils'
 
 export default function Index() {
   const {
@@ -53,7 +54,7 @@ export default function Index() {
   const t = useTranslations()
 
   const { instances, instancesLoading } = useInvidiousInstances()
-  console.log(instances)
+  logger.log(instances)
 
   const instanceOptions = useMemo<SingleDropdownOption[]>(
     () =>

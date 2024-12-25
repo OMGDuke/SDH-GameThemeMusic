@@ -1,5 +1,6 @@
 import { call } from '@decky/api'
 import { useEffect, useState } from 'react'
+import { logger } from '../utils'
 
 export type Settings = {
   defaultMuted: boolean
@@ -46,7 +47,7 @@ export const useSettings = () => {
         'set_setting',
         'settings',
         newSettings
-      ).catch(console.error)
+      ).catch(logger.error)
       return newSettings
     })
   }
