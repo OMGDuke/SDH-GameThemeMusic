@@ -1,5 +1,5 @@
-import { showModal, ModalRoot } from '@decky/ui';
-import { QRCodeSVG } from 'qrcode.react';
+import { showModal, ModalRoot } from '@decky/ui'
+import { QRCodeSVG } from 'qrcode.react'
 
 const showQrModal = (url: string) => {
   showModal(
@@ -10,10 +10,12 @@ const showQrModal = (url: string) => {
         includeMargin
         size={256}
       />
-      <span style={{ textAlign: 'center', wordBreak: 'break-word' }}>{url}</span>
+      <span style={{ textAlign: 'center', wordBreak: 'break-word' }}>
+        {url}
+      </span>
     </ModalRoot>,
     window
-  );
-};
+  )
+}
 
-export default showQrModal;
+export default showQrModal

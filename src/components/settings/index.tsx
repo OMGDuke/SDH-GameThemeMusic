@@ -15,7 +15,7 @@ import {
   ToggleField
 } from '@decky/ui'
 import { useMemo } from 'react'
-import { SiCrowdin, SiDiscord, SiGithub, SiKofi } from "react-icons/si";
+import { SiCrowdin, SiDiscord, SiGithub, SiKofi } from 'react-icons/si'
 import { useSettings } from '../../hooks/useSettings'
 import useTranslations from '../../hooks/useTranslations'
 import {
@@ -24,7 +24,7 @@ import {
   FaSave,
   FaVolumeMute,
   FaVolumeUp,
-  FaYoutube,
+  FaYoutube
 } from 'react-icons/fa'
 import {
   clearCache,
@@ -318,10 +318,30 @@ export default function Index() {
         </PanelSectionRow>
       </PanelSection>
       <PanelSection title={t('extras')}>
-        <PanelSocialButton icon={<SiKofi fill="#FF5E5B" />} url="https://ko-fi.com/OMGDuke">Ko-fi</PanelSocialButton>
-        <PanelSocialButton icon={<SiDiscord fill="#5865F2" />} url="https://deckbrew.xyz/discord">Discord</PanelSocialButton>
-        <PanelSocialButton icon={<SiGithub fill="#f5f5f5" />} url="https://github.com/OMGDuke/SDH-GameThemeMusic/">Github</PanelSocialButton>
-        <PanelSocialButton icon={<SiCrowdin fill="#FFFFFF" />} url="https://crowdin.com/project/sdh-gamethememusic">{t('helpTranslate')}</PanelSocialButton>
+        <PanelSocialButton
+          icon={<SiKofi fill="#FF5E5B" />}
+          url="https://ko-fi.com/OMGDuke"
+        >
+          Ko-fi
+        </PanelSocialButton>
+        <PanelSocialButton
+          icon={<SiDiscord fill="#5865F2" />}
+          url="https://deckbrew.xyz/discord"
+        >
+          Discord
+        </PanelSocialButton>
+        <PanelSocialButton
+          icon={<SiGithub fill="#f5f5f5" />}
+          url="https://github.com/OMGDuke/SDH-GameThemeMusic/"
+        >
+          Github
+        </PanelSocialButton>
+        <PanelSocialButton
+          icon={<SiCrowdin fill="#FFFFFF" />}
+          url="https://crowdin.com/project/sdh-gamethememusic"
+        >
+          {t('helpTranslate')}
+        </PanelSocialButton>
       </PanelSection>
     </div>
   )
