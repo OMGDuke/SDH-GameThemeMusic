@@ -14,6 +14,12 @@ import { useSettings } from '../../hooks/useSettings'
 import { FaVolumeUp } from 'react-icons/fa'
 import Spinner from '../spinner'
 import useAudioPlayer from '../../hooks/useAudioPlayer'
+import { callable, FileSelectionType, openFilePicker } from '@decky/api'
+import { logger } from '../../utils'
+
+const getEnv = (env: string) => callable<[string], string>('get_env')(env)
+const importAudio = (filePath: string) =>
+  callable<[string], string>('import_audio')(filePath)
 
 export default function GameSettings() {
   const t = useTranslations()
@@ -113,6 +119,59 @@ export default function GameSettings() {
         >
           {t('resetVolume')}
         </DialogButton>
+      </Focusable>
+
+      <Focusable
+        style={{
+          background: 'var(--main-editor-bg-color)',
+          borderRadius: '6px',
+          display: 'grid',
+          gridGap: '16px',
+          gridTemplateColumns: '2fr max-content max-content',
+          height: 'max-content',
+          padding: '10px 10px 10px 16px',
+          alignItems: 'center'
+        }}
+      >
+        <div style={{ padding: '0 10px' }}>
+          <PanelSectionRow>
+            <DialogButton
+              onClick={async () => {
+                const res = await openFilePicker(
+                  FileSelectionType.FILE,
+                  await getEnv('DECKY_USER_HOME')
+                )
+
+                logger.debug('importing audio', res)
+                await importAudio(res.realpath)
+
+                const fileName = res.realpath.split('/').pop()
+
+                if (!fileName)
+                  throw new Error(`Failed to import audio: ${res.realpath}`)
+
+                const videoId = fileName.split('.')[0]
+
+                if (!videoId)
+                  throw new Error(`Failed to import audio: ${fileName}`)
+
+                await updateCache(parseInt(appid), { videoId })
+
+                const audio = await getResolver(
+                  settings.useYtDlp
+                ).getAudioUrlFromVideo({
+                  id: videoId
+                })
+
+                setCurrentAudio(audio)
+              }}
+              disabled={loading}
+              style={{ height: 'max-content' }}
+            >
+              Import Music
+            </DialogButton>
+          </PanelSectionRow>
+        </div>
       </Focusable>
     </div>
   )

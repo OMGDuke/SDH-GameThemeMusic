@@ -4,6 +4,7 @@ import datetime
 import glob
 import json
 import os
+import shutil
 import ssl
 
 import aiohttp
@@ -171,3 +172,10 @@ class Plugin:
         for file in glob.glob(f"{self.cache_path}/*"):
             if os.path.isfile(file):
                 os.remove(file)
+
+    async def get_env(self, key: str):
+        return getattr(decky, key)
+
+    async def import_audio(self, file: str):
+        shutil.copy(file, self.music_path)
+        return f"{self.music_path}/{file.split('/')[-1]}"
