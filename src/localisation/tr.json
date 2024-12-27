@@ -11,7 +11,7 @@
     "defaultMuted": "Varsayılan Susturulmuş",
     "defaultMutedDescription": "Manuel olarak ayarlanmadıkça müzik çalmayın",
     "deleteDownloads": "Delete downloads",
-    "deleteDownloadsConfirm": "Are you sure you want to delete all downloaded music?",
+    "deleteDownloadsConfirm": "İndirilmiş bütün müzikleri silmek istediğine emin misin?",
     "deleteDownloadsDescription": "Delete all downloaded music. This will not reset overrides.",
     "deleteDownloadsLabel": "Delete all downloads",
     "deleteOverrides": "Geçersiz Kılmaları Sil",
