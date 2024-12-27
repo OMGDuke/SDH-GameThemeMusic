@@ -3,6 +3,7 @@ import base64
 import datetime
 import glob
 import json
+import logging
 import mimetypes
 import os
 import shutil
@@ -17,6 +18,7 @@ from settings import SettingsManager  # type: ignore
 
 
 class Plugin:
+    logger: logging.Logger
     yt_process: asyncio.subprocess.Process | None = None
     # We need this lock to make sure the process output isn't read by two concurrent readers at once.
     yt_process_lock = asyncio.Lock()
@@ -24,10 +26,8 @@ class Plugin:
     cache_path = f"{decky.DECKY_PLUGIN_RUNTIME_DIR}/cache"
     ssl_context = ssl.create_default_context(cafile=certifi.where())
 
-    async def __init__(self):
-        self.logger = decky.logger
-
     async def _main(self):
+        self.logger = decky.logger
         self.settings = SettingsManager(
             name="config", settings_directory=decky.DECKY_PLUGIN_SETTINGS_DIR
         )
@@ -117,9 +117,12 @@ class Plugin:
                 if mime_type is None:
                     self.logger.error(f"Could not determine MIME type for {local_match}")
                     return None
-                elif not mime_type.startswith("audio/"):
+                elif not mime_type.startswith("audio/") or mime_type != "video/webm":
                     self.logger.error(f"File {local_match} is not an audio file")
                     return None
+                if mime_type == "video/webm":
+                    self.logger.warning("File contains a video extension, assuming it as audio for back compatibility")
+                    mime_type = "audio/webm"
                 return f"data:{mime_type};base64,{base64.b64encode(file.read()).decode()}"
         result = await asyncio.create_subprocess_exec(
             f"{decky.DECKY_PLUGIN_DIR}/bin/yt-dlp",
@@ -157,7 +160,7 @@ class Plugin:
         async with aiohttp.ClientSession() as session:
             res = await session.get(url, ssl=self.ssl_context)
             res.raise_for_status()
-            with open(f"{self.music_path}/{id}.webm", "wb") as file:
+            with open(f"{self.music_path}/{id}.weba", "wb") as file:
                 async for chunk in res.content.iter_chunked(1024):
                     file.write(chunk)
 
