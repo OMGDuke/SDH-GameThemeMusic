@@ -3,9 +3,11 @@ import base64
 import datetime
 import glob
 import json
+import mimetypes
 import os
 import shutil
 import ssl
+import sys
 
 import aiohttp
 import certifi
@@ -21,6 +23,9 @@ class Plugin:
     music_path = f"{decky.DECKY_PLUGIN_RUNTIME_DIR}/music"
     cache_path = f"{decky.DECKY_PLUGIN_RUNTIME_DIR}/cache"
     ssl_context = ssl.create_default_context(cafile=certifi.where())
+
+    async def __init__(self):
+        self.logger = decky.logger
 
     async def _main(self):
         self.settings = SettingsManager(
@@ -104,9 +109,18 @@ class Plugin:
             # The audio has already been downloaded, so we can just use that one.
             # However, we cannot use local paths in the <audio> elements, so we'll
             # convert this to a base64-encoded data URL first.
-            extension = local_match.split(".")[-1]
             with open(local_match, "rb") as file:
-                return f"data:audio/{extension};base64,{base64.b64encode(file.read()).decode()}"
+                if sys.version_info.major == 3 and sys.version_info.minor < 13:
+                    mime_type, _ = mimetypes.guess_type(local_match, strict=False)
+                else:
+                    mime_type, _ = mimetypes.guess_file_type(local_match, strict=False)
+                if mime_type is None:
+                    self.logger.error(f"Could not determine MIME type for {local_match}")
+                    return None
+                elif not mime_type.startswith("audio/"):
+                    self.logger.error(f"File {local_match} is not an audio file")
+                    return None
+                return f"data:{mime_type};base64,{base64.b64encode(file.read()).decode()}"
         result = await asyncio.create_subprocess_exec(
             f"{decky.DECKY_PLUGIN_DIR}/bin/yt-dlp",
             f"{id}",
