@@ -117,7 +117,7 @@ class Plugin:
                 if mime_type is None:
                     self.logger.error(f"Could not determine MIME type for {local_match}")
                     return None
-                elif not mime_type.startswith("audio/") or mime_type != "video/webm":
+                elif not mime_type.startswith("audio/") and mime_type != "video/webm":
                     self.logger.error(f"File {local_match} is not an audio file")
                     return None
                 if mime_type == "video/webm":
