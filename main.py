@@ -114,7 +114,9 @@ class Plugin:
                     mime_type, _ = mimetypes.guess_type(local_match, strict=False)
                 else:
                     mime_type, _ = mimetypes.guess_file_type(local_match, strict=False)
-                if mime_type is None:
+                if mime_type is None and local_match.endswith(".m4a"):
+                    mime_type = "audio/x-m4a"
+                elif mime_type is None:
                     self.logger.error(f"Could not determine MIME type for {local_match}")
                     return None
                 elif not mime_type.startswith("audio/") and mime_type != "video/webm":
@@ -123,6 +125,8 @@ class Plugin:
                 if mime_type == "video/webm":
                     self.logger.warning("File contains a video extension, assuming it as audio for back compatibility")
                     mime_type = "audio/webm"
+                elif mime_type == "audio/mp4a-latm":
+                    mime_type = "audio/x-m4a"
                 return f"data:{mime_type};base64,{base64.b64encode(file.read()).decode()}"
         result = await asyncio.create_subprocess_exec(
             f"{decky.DECKY_PLUGIN_DIR}/bin/yt-dlp",
