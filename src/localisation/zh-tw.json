@@ -58,7 +58,7 @@
     "supportDescription": "前往 Steam Deck Homebrew Discord deckbrew.xyz/discord",
     "supportLabel": "支援",
     "useYtDlp": "使用 yt-dlp",
-    "useYtDlpDescription": "在不使用 Invidious 容器情況下直接存取 YouTube",
+    "useYtDlpDescription": "在不使用 Invidious 容器情況下直接造訪 YouTube",
     "volume": "音樂音量",
     "volumeDescription": "調整音樂音量"
 }
