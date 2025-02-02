@@ -58,7 +58,7 @@
     "supportDescription": "スチームデック自作の ディスコードdeckbrew.xyz/discordを訪ねる",
     "supportLabel": "サポート",
     "useYtDlp": "yt-dlpを使用する",
-    "useYtDlpDescription": "Invidious なしで YouTube に直接アクセスする",
+    "useYtDlpDescription": "Invidious なしでYouTubeに直接アクセスする",
     "volume": "音量",
     "volumeDescription": "音量調整"
 }
