@@ -47,7 +47,7 @@
     "restoreOverridesConfirm": "このバックアップを復元しますか？",
     "restoreOverridesConfirmDetails": "これは現在のオーバーライドをすべて上書きします！",
     "restoreOverridesLabel": "バックアップからオーバーライドを復元する",
-    "restoreSuccessful": "復元が成功しました",
+    "restoreSuccessful": "復元完了",
     "restoreSuccessfulDetails": "バックアップからオーバーライドが復元されました。",
     "search": "検索",
     "select": "選択",
@@ -58,7 +58,7 @@
     "supportDescription": "スチームデック自作の ディスコードdeckbrew.xyz/discordを訪ねる",
     "supportLabel": "サポート",
     "useYtDlp": "yt-dlpを使用する",
-    "useYtDlpDescription": "Invidious なしでYouTubeに直接アクセスする",
+    "useYtDlpDescription": "InvidiousなしでYouTubeに直接アクセスする",
     "volume": "音量",
     "volumeDescription": "音量調整"
 }
