@@ -44,7 +44,7 @@
     "restoreDownloadsOperation": "Downloading {current}/{total}...",
     "restoreDownloadsOperationTitle": "Downloading missing songs...",
     "restoreOverrides": "Изберете резервно копие",
-    "restoreOverridesConfirm": "Restore this backup?",
+    "restoreOverridesConfirm": "Възстановявате ли това резервно копие?",
     "restoreOverridesConfirmDetails": "This will overwrite all your current overrides!",
     "restoreOverridesLabel": "Restore overrides from backup",
     "restoreSuccessful": "Успешно възстановяване",
