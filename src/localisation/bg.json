@@ -36,7 +36,7 @@
     "play": "Пускане",
     "reset": "Нулиране",
     "resetVolume": "Нулиране",
-    "restoreDownloads": "Restore downloads",
+    "restoreDownloads": "Възстановяване на изтеглянията",
     "restoreDownloadsConfirm": "Изтегляте ли всички липсващи песни?",
     "restoreDownloadsConfirmDescription": "This will download up to {num} songs and might take a while.",
     "restoreDownloadsDescription": "Download all songs from manually set overrides that haven't been downloaded yet.",
