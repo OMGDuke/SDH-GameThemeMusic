@@ -38,7 +38,7 @@
     "resetVolume": "Réinitialiser",
     "restoreDownloads": "Restaurer les téléchargements",
     "restoreDownloadsConfirm": "Télécharger tous les morceaux manquants ?",
-    "restoreDownloadsConfirmDescription": "Cela téléchargera {num} morceaux et cela peut prendre un certain temps.",
+    "restoreDownloadsConfirmDescription": "Cela téléchargera {num} morceaux et peut prendre un certain temps.",
     "restoreDownloadsDescription": "Télécharger tous les morceaux alternatifs définis manuellement qui n'ont pas encore été téléchargés.",
     "restoreDownloadsLabel": "Restaurer les téléchargements manquants",
     "restoreDownloadsOperation": "Téléchargement {current}/{total}...",
