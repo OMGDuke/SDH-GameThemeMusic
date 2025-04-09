@@ -31,7 +31,7 @@ const useThemeMusic = (appId: number) => {
       } else if (settings.defaultMuted) {
         return setAudio({ videoId: '', audioUrl: '' })
       } else {
-        const newAudio = await resolver.getAudio(appName as string)
+        const newAudio = await resolver.getAudio(appName as string, settings.defaultSearchKeywords)
         if (ignore) {
           return
         }

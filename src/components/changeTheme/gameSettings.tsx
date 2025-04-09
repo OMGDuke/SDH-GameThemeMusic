@@ -44,7 +44,7 @@ export default function GameSettings() {
         })
         setCurrentAudio(newAudio)
       } else {
-        const newAudio = await resolver.getAudio(appName as string)
+        const newAudio = await resolver.getAudio(appName as string, settings.defaultSearchKeywords)
         setCurrentAudio(newAudio?.audioUrl)
       }
       setLoading(false)

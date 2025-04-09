@@ -17,10 +17,10 @@ abstract class AudioResolver {
   abstract downloadAudio(video: YouTubeVideo): Promise<boolean>
 
   async getAudio(
-    appName: string
+    appName: string,
+    keywords: string
   ): Promise<{ videoId: string; audioUrl: string } | undefined> {
-    const { settings } = useSettings()
-    const videos = this.getYouTubeSearchResults(appName + ' ' + settings.defaultSearchKeywords)
+    const videos = this.getYouTubeSearchResults(appName + ' ' + keywords)
     for await (const video of videos) {
       const audioUrl = await this.getAudioUrlFromVideo(video)
       if (audioUrl?.length) {
