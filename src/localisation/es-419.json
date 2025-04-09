@@ -60,5 +60,9 @@
     "useYtDlp": "Use yt-dlp",
     "useYtDlpDescription": "Access YouTube directly without Invidious",
     "volume": "Volumen de la Música",
-    "volumeDescription": "Ajustar el volumen de la música"
+    "volumeDescription": "Ajustar el volumen de la música",
+    "changeDefaultSearchKeywordsLabel": "Change Default Search Keywords",
+    "changeDefaultSearchKeywords": "Change Keywords",
+    "currentDefaultSearchKeywords": "Current keywords: {current}",
+    "changeDefaultSearchKeywordsDetails":"This will change the default search keywords when changing the theme of a game."
 }
