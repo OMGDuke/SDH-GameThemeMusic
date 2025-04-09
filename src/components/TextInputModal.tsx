@@ -51,7 +51,6 @@ export const TextInputModal: FC<TextInputModalProps> = ({
     <ConfirmModal
       {...props}
       strTitle={strTitle}
-      strDescription={strDescription}
       strOKButtonText={strOKButtonText}
       strCancelButtonText={strCancelButtonText}
       onOK={handleConfirm}  // Handle confirm action
