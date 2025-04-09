@@ -39,7 +39,8 @@ export default function ChangePage({
   const appDetails = appStore.GetAppOverviewByGameID(parseInt(appid))
   const appName = appDetails?.display_name?.replace(/(™|®|©)/g, '')
   const [selected, setSelected] = useState<string | undefined>()
-  const [searchTerm, setSearchTerm] = useState(currentSearch)
+  // searchTerm state is now controlled by the parent.
+  const searchTerm = currentSearch;
 
   useEffect(() => {
     async function getData() {
@@ -95,7 +96,7 @@ export default function ChangePage({
               }}
             >
               <TextField
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => customSearch(e.target.value)}
                 value={searchTerm}
               />
             </form>
@@ -110,7 +111,7 @@ export default function ChangePage({
               disabled={!searchTerm?.length}
               focusable={!loading && Boolean(searchTerm?.length)}
               onClick={() => {
-                setSearchTerm(setInitialSearch())
+                customSearch(setInitialSearch())
               }}
             >
               {t('reset')}

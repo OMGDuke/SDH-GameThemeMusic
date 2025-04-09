@@ -5,7 +5,7 @@ import {
   Audio,
   YouTubeVideoPreview
 } from '../../types/YouTube'
-import { Settings, defaultSettings } from '../hooks/useSettings'
+import { Settings, defaultSettings, useSettings } from '../hooks/useSettings'
 
 abstract class AudioResolver {
   abstract getYouTubeSearchResults(
@@ -19,7 +19,8 @@ abstract class AudioResolver {
   async getAudio(
     appName: string
   ): Promise<{ videoId: string; audioUrl: string } | undefined> {
-    const videos = this.getYouTubeSearchResults(appName + ' Theme Music')
+    const { settings } = useSettings()
+    const videos = this.getYouTubeSearchResults(appName + ' ' + settings.defaultSearchKeywords)
     for await (const video of videos) {
       const audioUrl = await this.getAudioUrlFromVideo(video)
       if (audioUrl?.length) {
