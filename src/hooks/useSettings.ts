@@ -32,6 +32,9 @@ export const useSettings = () => {
         'settings',
         settings
       )
+      // Merge default with saved settings to account for newer additions.
+      const newSettings = { ...defaultSettings, ...savedSettings };
+      setSettings(newSettings)
       setIsLoading(false)
     }
     getData()
