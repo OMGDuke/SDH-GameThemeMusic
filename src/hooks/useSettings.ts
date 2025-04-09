@@ -7,7 +7,7 @@ export type Settings = {
   downloadAudio: boolean
   invidiousInstance: string
   volume: number
-  defaultSearchQuery: string
+  defaultSearchKeywords: string
 }
 
 export const defaultSettings = {
@@ -16,7 +16,7 @@ export const defaultSettings = {
   downloadAudio: false,
   invidiousInstance: 'https://inv.tux.pizza',
   volume: 1,
-  defaultSearchQuery: "Theme Music"
+  defaultSearchKeywords: "Theme Music"
 }
 
 export const useSettings = () => {
@@ -72,8 +72,8 @@ export const useSettings = () => {
   function setVolume(value: Settings['volume']) {
     updateSettings('volume', value)
   }
-  function setDefaultSearchQuery(value: Settings['defaultSearchQuery']) {
-    updateSettings('defaultSearchQuery', value)
+  function setDefaultSearchKeywords(value: Settings['defaultSearchKeywords']) {
+    updateSettings('defaultSearchKeywords', value)
   }
 
   return {
@@ -83,7 +83,7 @@ export const useSettings = () => {
     setDownloadAudio,
     setInvidiousInstance,
     setVolume,
-    setDefaultSearchQuery,
+    setDefaultSearchKeywords,
     isLoading
   }
 }
