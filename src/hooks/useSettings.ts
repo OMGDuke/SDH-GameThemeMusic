@@ -7,6 +7,7 @@ export type Settings = {
   downloadAudio: boolean
   invidiousInstance: string
   volume: number
+  defaultSearchQuery: string
 }
 
 export const defaultSettings = {
@@ -14,7 +15,8 @@ export const defaultSettings = {
   useYtDlp: false,
   downloadAudio: false,
   invidiousInstance: 'https://inv.tux.pizza',
-  volume: 1
+  volume: 1,
+  defaultSearchQuery: "Theme Music"
 }
 
 export const useSettings = () => {
@@ -30,7 +32,6 @@ export const useSettings = () => {
         'settings',
         settings
       )
-      setSettings(savedSettings)
       setIsLoading(false)
     }
     getData()
@@ -68,6 +69,9 @@ export const useSettings = () => {
   function setVolume(value: Settings['volume']) {
     updateSettings('volume', value)
   }
+  function setDefaultSearchQuery(value: Settings['defaultSearchQuery']) {
+    updateSettings('defaultSearchQuery', value)
+  }
 
   return {
     settings,
@@ -76,6 +80,7 @@ export const useSettings = () => {
     setDownloadAudio,
     setInvidiousInstance,
     setVolume,
+    setDefaultSearchQuery,
     isLoading
   }
 }
