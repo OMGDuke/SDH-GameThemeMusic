@@ -4,7 +4,6 @@ import {
   DropdownItem,
   Menu,
   MenuItem,
-  ModalPosition,
   PanelSection,
   PanelSectionRow,
   ProgressBarWithInfo,

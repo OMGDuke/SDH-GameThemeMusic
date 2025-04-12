@@ -5,7 +5,7 @@ import {
   Audio,
   YouTubeVideoPreview
 } from '../../types/YouTube'
-import { Settings, defaultSettings, useSettings } from '../hooks/useSettings'
+import { Settings, defaultSettings } from '../hooks/useSettings'
 
 abstract class AudioResolver {
   abstract getYouTubeSearchResults(
