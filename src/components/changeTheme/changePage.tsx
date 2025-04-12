@@ -111,7 +111,7 @@ export default function ChangePage({
               disabled={!searchTerm?.length}
               focusable={!loading && Boolean(searchTerm?.length)}
               onClick={() => {
-                customSearch(setInitialSearch())
+                setInitialSearch()
               }}
             >
               {t('reset')}

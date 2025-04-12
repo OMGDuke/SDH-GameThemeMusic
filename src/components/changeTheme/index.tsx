@@ -26,7 +26,7 @@ export default function ChangeTheme() {
   // Only set initial search term when it is ready
   useEffect(() => {
     if (!settingsLoading) {
-      setInitialSearch()
+      defaultSearch()
     }
   }, [settingsLoading, appName])
   
@@ -63,7 +63,7 @@ export default function ChangeTheme() {
     })
   }
 
-  function setInitialSearch() {
+  function defaultSearch() {
     const initialSearch = appName ? appName + ' ' + settings.defaultSearchKeywords : ""
     setSearchTerm(initialSearch)
     return initialSearch
@@ -90,7 +90,7 @@ export default function ChangeTheme() {
                 handlePlay={handlePlay}
                 customSearch={setSearchTerm}
                 currentSearch={searchTerm}
-                setInitialSearch={setInitialSearch}
+                setInitialSearch={defaultSearch}
               />
             ),
             id: 'change-music-tab'
