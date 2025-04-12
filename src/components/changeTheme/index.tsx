@@ -21,8 +21,15 @@ export default function ChangeTheme() {
     (YouTubeVideoPreview & { isPlaying: boolean })[]
   >([])
   const [loadingNum, setLoadingNum] = useState(0)
-  const initialSearch = appName?.concat(' Theme Music') ?? ''
-  const [searchTerm, setSearchTerm] = useState(initialSearch)
+  const [searchTerm, setSearchTerm] = useState("")
+
+  // Only set initial search term when it is ready
+  useEffect(() => {
+    if (!settingsLoading) {
+      defaultSearch()
+    }
+  }, [settingsLoading, appName])
+  
   useEffect(() => {
     let ignore = false
     async function getData() {
@@ -56,7 +63,8 @@ export default function ChangeTheme() {
     })
   }
 
-  function setInitialSearch() {
+  function defaultSearch() {
+    const initialSearch = appName ? appName + ' ' + settings.defaultSearchKeywords : ""
     setSearchTerm(initialSearch)
     return initialSearch
   }
@@ -82,7 +90,7 @@ export default function ChangeTheme() {
                 handlePlay={handlePlay}
                 customSearch={setSearchTerm}
                 currentSearch={searchTerm}
-                setInitialSearch={setInitialSearch}
+                setInitialSearch={defaultSearch}
               />
             ),
             id: 'change-music-tab'

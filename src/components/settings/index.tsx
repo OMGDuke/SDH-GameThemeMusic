@@ -38,6 +38,7 @@ import useInvidiousInstances from '../../hooks/useInvidiousInstances'
 import { toaster } from '@decky/api'
 import { getResolver } from '../../actions/audio'
 import PanelSocialButton from './socialButton'
+import {TextInputModal} from '../../components/TextInputModal'
 
 export default function Index() {
   const {
@@ -47,7 +48,8 @@ export default function Index() {
     setUseYtDlp,
     setDownloadAudio,
     setInvidiousInstance,
-    setVolume
+    setVolume,
+    setDefaultSearchKeywords
   } = useSettings()
 
   const t = useTranslations()
@@ -110,6 +112,18 @@ export default function Index() {
             duration: 1500
           })
         }}
+      />
+    )
+  }
+
+  // @TODO: Configure Localization
+  const confirmChangeSearchKeywords = () => {
+    showModal(
+      <TextInputModal
+        strTitle={t('changeDefaultSearchKeywordsLabel')}
+        strDescription={t('changeDefaultSearchKeywordsDetails')}
+        value = {settings.defaultSearchKeywords}
+        onConfirm={(value) => setDefaultSearchKeywords(value)}
       />
     )
   }
@@ -239,6 +253,18 @@ export default function Index() {
               setDownloadAudio(newVal)
             }}
           ></ToggleField>
+        </PanelSectionRow>
+        <PanelSectionRow>
+          <ButtonItem
+            label={t('changeDefaultSearchKeywordsLabel')}
+            description={t('currentDefaultSearchKeywords', {
+              current: settings.defaultSearchKeywords
+            })}
+            layout="below"
+            onClick={() => confirmChangeSearchKeywords()}
+          >
+            {t('changeDefaultSearchKeywords')}
+          </ButtonItem>
         </PanelSectionRow>
         <PanelSectionRow>
           <ButtonItem

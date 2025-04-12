@@ -60,5 +60,9 @@
     "useYtDlp": "Use yt-dlp",
     "useYtDlpDescription": "Access YouTube directly without Invidious",
     "volume": "Musiikin äänenvoimakkuus",
-    "volumeDescription": "Säädä musiikin äänenvoimakkuutta"
+    "volumeDescription": "Säädä musiikin äänenvoimakkuutta",
+    "changeDefaultSearchKeywordsLabel": "Change Default Search Keywords",
+    "changeDefaultSearchKeywords": "Change Keywords",
+    "currentDefaultSearchKeywords": "Current keywords: {current}",
+    "changeDefaultSearchKeywordsDetails":"This will change the default search keywords when changing the theme of a game."
 }
