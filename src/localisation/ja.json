@@ -39,7 +39,7 @@
     "restoreDownloads": "ダウンロードを復元する",
     "restoreDownloadsConfirm": "不足している曲を全てダウンロードしますか？",
     "restoreDownloadsConfirmDescription": "{num} の曲にダウンロードされます。しばらく時間がかかる場合があります。",
-    "restoreDownloadsDescription": "Download all songs from manually set overrides that haven't been downloaded yet.",
+    "restoreDownloadsDescription": "まだダウンロードされていない手動で設定されたオーバーライドから全曲をダウンロードする。",
     "restoreDownloadsLabel": "不足しているダウンロードを復元する",
     "restoreDownloadsOperation": "{current}/{total} をダウンロード中…",
     "restoreDownloadsOperationTitle": "不足している曲をダウンロード中…",
