@@ -3,8 +3,12 @@ import base64
 import datetime
 import glob
 import json
+import logging
+import mimetypes
 import os
+import shutil
 import ssl
+import sys
 
 import aiohttp
 import certifi
@@ -14,6 +18,7 @@ from settings import SettingsManager  # type: ignore
 
 
 class Plugin:
+    logger: logging.Logger
     yt_process: asyncio.subprocess.Process | None = None
     # We need this lock to make sure the process output isn't read by two concurrent readers at once.
     yt_process_lock = asyncio.Lock()
@@ -22,6 +27,7 @@ class Plugin:
     ssl_context = ssl.create_default_context(cafile=certifi.where())
 
     async def _main(self):
+        self.logger = decky.logger
         self.settings = SettingsManager(
             name="config", settings_directory=decky.DECKY_PLUGIN_SETTINGS_DIR
         )
@@ -103,9 +109,25 @@ class Plugin:
             # The audio has already been downloaded, so we can just use that one.
             # However, we cannot use local paths in the <audio> elements, so we'll
             # convert this to a base64-encoded data URL first.
-            extension = local_match.split(".")[-1]
             with open(local_match, "rb") as file:
-                return f"data:audio/{extension};base64,{base64.b64encode(file.read()).decode()}"
+                if sys.version_info.major == 3 and sys.version_info.minor < 13:
+                    mime_type, _ = mimetypes.guess_type(local_match, strict=False)
+                else:
+                    mime_type, _ = mimetypes.guess_file_type(local_match, strict=False)
+                if mime_type is None and local_match.endswith(".m4a"):
+                    mime_type = "audio/x-m4a"
+                elif mime_type is None:
+                    self.logger.error(f"Could not determine MIME type for {local_match}")
+                    return None
+                elif not mime_type.startswith("audio/") and mime_type != "video/webm":
+                    self.logger.error(f"File {local_match} is not an audio file")
+                    return None
+                if mime_type == "video/webm":
+                    self.logger.warning("File contains a video extension, assuming it as audio for back compatibility")
+                    mime_type = "audio/webm"
+                elif mime_type == "audio/mp4a-latm":
+                    mime_type = "audio/x-m4a"
+                return f"data:{mime_type};base64,{base64.b64encode(file.read()).decode()}"
         result = await asyncio.create_subprocess_exec(
             f"{decky.DECKY_PLUGIN_DIR}/bin/yt-dlp",
             f"{id}",
@@ -142,7 +164,7 @@ class Plugin:
         async with aiohttp.ClientSession() as session:
             res = await session.get(url, ssl=self.ssl_context)
             res.raise_for_status()
-            with open(f"{self.music_path}/{id}.webm", "wb") as file:
+            with open(f"{self.music_path}/{id}.weba", "wb") as file:
                 async for chunk in res.content.iter_chunked(1024):
                     file.write(chunk)
 
@@ -171,3 +193,10 @@ class Plugin:
         for file in glob.glob(f"{self.cache_path}/*"):
             if os.path.isfile(file):
                 os.remove(file)
+
+    async def get_env(self, key: str):
+        return getattr(decky, key)
+
+    async def import_audio(self, file: str):
+        shutil.copy(file, self.music_path)
+        return f"{self.music_path}/{file.split('/')[-1]}"

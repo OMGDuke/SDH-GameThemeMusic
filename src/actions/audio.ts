@@ -6,6 +6,7 @@ import {
   YouTubeVideoPreview
 } from '../../types/YouTube'
 import { Settings, defaultSettings } from '../hooks/useSettings'
+import { logger } from '../utils'
 
 abstract class AudioResolver {
   abstract getYouTubeSearchResults(
@@ -63,7 +64,7 @@ class InvidiousAudioResolver extends AudioResolver {
         }
       }
     } catch (err) {
-      console.debug(err)
+      logger.debug(err)
     }
     return
   }
@@ -88,7 +89,7 @@ class InvidiousAudioResolver extends AudioResolver {
         return audio?.url
       }
     } catch (err) {
-      console.log(err)
+      logger.log(err)
     }
     return undefined
   }
@@ -104,7 +105,7 @@ class InvidiousAudioResolver extends AudioResolver {
       await call<[string, string]>('download_url', video.url, video.id)
       return true
     } catch (e) {
-      console.error(e)
+      logger.error(e)
       return false
     }
   }
@@ -123,7 +124,7 @@ class YtDlpAudioResolver extends AudioResolver {
       }
       return
     } catch (err) {
-      console.error(err)
+      logger.error(err)
     }
     return
   }
@@ -147,7 +148,7 @@ class YtDlpAudioResolver extends AudioResolver {
       await call<[string]>('download_yt_audio', video.id)
       return true
     } catch (e) {
-      console.error(e)
+      logger.error(e)
       return false
     }
   }
@@ -259,7 +260,7 @@ export async function getInvidiousInstances(): Promise<
       }
     }
   } catch (err) {
-    console.debug(err)
+    logger.debug(err)
   }
   return []
 }
